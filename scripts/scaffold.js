@@ -51,31 +51,78 @@ fs.writeFileSync(
   JSON.stringify(packageJson, null, 2)
 );
 
-const indexJs = `import { init, elementReady, fireDataLayerEvent } from '@conversio/helpers';
+const indexJs = `console.log('${experienceCode} loaded');
 
-const runExperience = () => {
-  console.log('${experienceCode} loaded');
+// Write your plain JavaScript here
+// No imports needed - just vanilla JS
 
-  // Find key page elements
-  elementReady('body')
-    .then(() => {
-      console.log('DOM ready');
-      // Add your experience code here
-    })
-    .catch(err => console.error(err));
+// Example: Wait for an element
+const waitForElement = (selector, timeout = 5000) => {
+  return new Promise((resolve, reject) => {
+    const element = document.querySelector(selector);
+    if (element) {
+      resolve(element);
+      return;
+    }
+
+    const observer = new MutationObserver(() => {
+      const el = document.querySelector(selector);
+      if (el) {
+        observer.disconnect();
+        resolve(el);
+      }
+    });
+
+    setTimeout(() => {
+      observer.disconnect();
+      reject(new Error(\`Element "\${selector}" not found after \${timeout}ms\`));
+    }, timeout);
+
+    observer.observe(document.documentElement, {
+      childList: true,
+      subtree: true,
+    });
+  });
 };
 
-init(5, runExperience);
+// Example: Modify the page
+waitForElement('body')
+  .then(() => {
+    console.log('Body found, ready to modify');
+    // Add your code here
+  })
+  .catch(err => console.error('Error:', err));
+
+// Example: Send tracking event
+if (window.dataLayer) {
+  window.dataLayer.push({
+    event: 'conversioEvent',
+    conversioEventName: '${experienceCode.toUpperCase()}_LOADED',
+  });
+}
 `;
 
 fs.writeFileSync(path.join(experiencePath, 'src', 'index.js'), indexJs);
 
-const stylesScss = `// Add your styles here
-// Styles will be injected into the page when the experience loads
+const stylesScss = `// ${experienceCode} Styles
+// Auto-compiled and injected into the page
 
-body {
-  // Example style
-}
+// Use SCSS features: variables, mixins, nesting
+// Or plain CSS - both work!
+
+// Example variables
+$primary-color: #667eea;
+$padding-m: 20px;
+
+// Your styles here
+// .my-element {
+//   background: $primary-color;
+//   padding: $padding-m;
+//
+//   &:hover {
+//     opacity: 0.9;
+//   }
+// }
 `;
 
 fs.writeFileSync(path.join(experiencePath, 'src', 'styles.scss'), stylesScss);
