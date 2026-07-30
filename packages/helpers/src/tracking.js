@@ -1,6 +1,6 @@
 const dedupCache = new Set();
 
-export function fireDataLayerEvent(eventName, eventData = {}) {
+function fireDataLayerEvent(eventName, eventData = {}) {
   if (!window.dataLayer) {
     console.warn('dataLayer not found; event not fired');
     return;
@@ -20,7 +20,7 @@ export function fireDataLayerEvent(eventName, eventData = {}) {
   });
 }
 
-export function fireAdobeEvent(eventType, eventData = {}) {
+function fireAdobeEvent(eventType, eventData = {}) {
   if (!window.adobeDataLayer) {
     console.warn('adobeDataLayer not found; event not fired');
     return;
@@ -39,3 +39,5 @@ export function fireAdobeEvent(eventType, eventData = {}) {
     ...eventData,
   });
 }
+
+module.exports = { fireDataLayerEvent, fireAdobeEvent };

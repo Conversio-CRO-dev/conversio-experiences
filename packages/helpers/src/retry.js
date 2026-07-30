@@ -1,4 +1,4 @@
-export function retryTest(fn, tries = 5, delay = 100) {
+function retryTest(fn, tries = 5, delay = 100) {
   return new Promise((resolve, reject) => {
     const attempt = (attemptsLeft) => {
       try {
@@ -16,7 +16,7 @@ export function retryTest(fn, tries = 5, delay = 100) {
   });
 }
 
-export function handleLoadFailure(error, tries, retryFn) {
+function handleLoadFailure(error, tries, retryFn) {
   console.error(`Load failed (attempt ${tries}):`, error);
   if (tries > 0) {
     console.log(`Retrying in 1s... (${tries} attempts left)`);
@@ -25,3 +25,5 @@ export function handleLoadFailure(error, tries, retryFn) {
     console.error('Experience failed to load after all retries');
   }
 }
+
+module.exports = { retryTest, handleLoadFailure };

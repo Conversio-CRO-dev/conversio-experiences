@@ -12,14 +12,16 @@ npm run scaffold -- WN003 --client=warner-hotels
 
 Available clients: `warner-hotels`, `team-sport`, `laithwaites`, `finisterre`
 
-### Test locally
+### Test on live site
 
 ```bash
-cd experiences/WN003
-npm run test
+npm run build:experience -- WN003
 ```
 
-Launches Puppeteer with hot-reload. Edit `src/index.js` and changes inject automatically.
+1. Copy the output: `dist/WN003/main.js`
+2. Paste into AB Tasty / Adobe Target as your experience bundle
+3. View live on the client site
+4. Repeat build after edits
 
 ### Build for production
 
@@ -145,13 +147,6 @@ Generate a new experience folder with template files.
 
 Build experience to `dist/<CODE>/main.js`.
 
-### npm run tester -- test <CODE>
-
-Launch local Puppeteer tester with hot-reload.
-
-### npm run tester -- build <CODE>
-
-Build without running Puppeteer (same as `build:experience`).
 
 ## Contributing
 

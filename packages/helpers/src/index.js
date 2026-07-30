@@ -1,5 +1,16 @@
-export { elementReady } from './elementReady.js';
-export { makeStyleElementString, injectStyles } from './styling.js';
-export { fireDataLayerEvent, fireAdobeEvent } from './tracking.js';
-export { handleLoadFailure, retryTest } from './retry.js';
-export { init } from './init.js';
+const { elementReady } = require('./elementReady.js');
+const { makeStyleElementString, injectStyles } = require('./styling.js');
+const { fireDataLayerEvent, fireAdobeEvent } = require('./tracking.js');
+const { handleLoadFailure, retryTest } = require('./retry.js');
+const { init } = require('./init.js');
+
+module.exports = {
+  elementReady,
+  makeStyleElementString,
+  injectStyles,
+  fireDataLayerEvent,
+  fireAdobeEvent,
+  handleLoadFailure,
+  retryTest,
+  init,
+};

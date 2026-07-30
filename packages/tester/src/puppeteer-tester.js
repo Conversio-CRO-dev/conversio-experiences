@@ -12,47 +12,56 @@ async function runTester(experienceCode, experiencePath, client) {
     await buildExperience(experienceCode, experiencePath);
   }
 
-  const browser = await puppeteer.launch({ headless: true });
-  const page = await browser.newPage();
+  const browser = await puppeteer.launch({
+    headless: false,
+    defaultViewport: null,
+    args: ['--start-maximized', '--no-sandbox']
+  });
 
-  page.on('console', msg => console.log(`[PAGE] ${msg.text()}`));
-  page.on('error', err => console.error('[PAGE ERROR]', err));
+  const page = await browser.newPage();
+  page.on('console', msg => console.log(`[page:${msg.type()}] ${msg.text()}`));
+  page.on('error', err => console.error('[page:error]', err));
+  page.on('pageerror', err => console.error('[page:pageerror]', err));
 
   const injectBundle = async () => {
     const bundle = fs.readFileSync(distPath, 'utf-8');
 
-    console.log(`\nInjecting into ${client.name}...`);
-    await page.goto(client.url, { waitUntil: 'domContentLoaded' });
+    console.log(`\nNavigating to ${client.url}...`);
+    try {
+      await page.goto(client.url, { waitUntil: 'domcontentloaded' });
+    } catch (err) {
+      console.error('Navigation failed:', err.message);
+      return;
+    }
 
-    await page.evaluate(code => {
-      const script = document.createElement('script');
-      script.textContent = code;
-      document.head.appendChild(script);
-    }, bundle);
+    console.log(`Injecting ${experienceCode}...`);
+    await page.addScriptTag({ content: bundle });
+    console.log('✓ Injected\n');
   };
 
   await injectBundle();
 
-  console.log(`\nWatching for changes in ${experiencePath}/src...`);
+  console.log(`Watching ${experiencePath}/src for changes...`);
   console.log('Press Ctrl+C to stop\n');
 
   const watcher = chokidar.watch(path.join(experiencePath, 'src'));
 
-  watcher.on('change', async () => {
+  watcher.on('change', async (file) => {
     try {
-      console.log('Rebuilding...');
+      console.log(`\n📝 ${path.basename(file)} changed, rebuilding...`);
       await buildExperience(experienceCode, experiencePath);
+      console.log('✓ Rebuilt, reloading...');
+      await page.reload({ waitUntil: 'domcontentloaded' });
       await injectBundle();
-      console.log('Injected.\n');
     } catch (err) {
-      console.error('Rebuild failed:', err.message);
+      console.error('✗ Rebuild failed:', err.message);
     }
   });
 
-  process.on('SIGINT', async () => {
+  process.on('SIGINT', () => {
     console.log('\nShutting down...');
     watcher.close();
-    await browser.close();
+    browser.close();
     process.exit(0);
   });
 }

@@ -2,7 +2,8 @@ const fs = require('fs');
 const path = require('path');
 
 function loadClients() {
-  const clientsPath = path.resolve(__dirname, '../../config/clients.json');
+  const monorepoRoot = path.resolve(__dirname, '../../..');
+  const clientsPath = path.resolve(monorepoRoot, 'config/clients.json');
   const data = JSON.parse(fs.readFileSync(clientsPath, 'utf-8'));
   return data.clients;
 }

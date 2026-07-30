@@ -23,7 +23,8 @@ Examples:
   process.exit(1);
 }
 
-const experiencePath = path.resolve(__dirname, '../../experiences', experienceCode);
+const monorepoRoot = path.resolve(__dirname, '../../..');
+const experiencePath = path.resolve(monorepoRoot, 'experiences', experienceCode);
 if (!fs.existsSync(experiencePath)) {
   console.error(`Error: Experience "${experienceCode}" not found at ${experiencePath}`);
   console.error('Run: npm run scaffold -- <CODE> --client=<CLIENT>');
@@ -61,7 +62,7 @@ if (command === 'build') {
   console.log(`Testing ${experienceCode} on ${client.name}...`);
   runTester(experienceCode, experiencePath, client)
     .catch(err => {
-      console.error('Tester failed:', err.message);
+      console.error('Tester failed:', err.stack || err.message || err);
       process.exit(1);
     });
 } else {

@@ -1,4 +1,4 @@
-export function elementReady(selector, timeout = 5000) {
+function elementReady(selector, timeout = 5000) {
   return new Promise((resolve, reject) => {
     const element = document.querySelector(selector);
     if (element) {
@@ -26,3 +26,5 @@ export function elementReady(selector, timeout = 5000) {
     });
   });
 }
+
+module.exports = { elementReady };

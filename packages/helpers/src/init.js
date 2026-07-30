@@ -1,4 +1,4 @@
-export function init(tries, runExperience) {
+function init(tries, runExperience) {
   const maxTries = tries || 5;
   let attemptCount = 0;
 
@@ -30,3 +30,5 @@ export function init(tries, runExperience) {
     attemptInit();
   }
 }
+
+module.exports = { init };
