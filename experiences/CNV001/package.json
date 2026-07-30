@@ -1,0 +1,14 @@
+{
+  "name": "experience-cnv001",
+  "version": "0.1.0",
+  "description": "Conversio CRO experience: CNV001",
+  "client": "conversio",
+  "scripts": {
+    "build": "npm run build:experience -- CNV001",
+    "test": "npm run tester -- test CNV001"
+  },
+  "private": true,
+  "dependencies": {
+    "@conversio/helpers": "*"
+  }
+}
