@@ -1,0 +1,44 @@
+{
+  "clients": {
+    "conversio": {
+      "name": "Conversio",
+      "url": "https://conversio.com",
+      "selectors": {
+        "body": "body",
+        "mainContent": "main"
+      }
+    },
+    "warner-hotels": {
+      "name": "Warner Hotels",
+      "url": "https://www.warnerhotels.com",
+      "selectors": {
+        "body": "body",
+        "mainContent": "main"
+      }
+    },
+    "team-sport": {
+      "name": "Team Sport",
+      "url": "https://www.teamsport.co.uk",
+      "selectors": {
+        "body": "body",
+        "mainContent": "[role='main']"
+      }
+    },
+    "laithwaites": {
+      "name": "Laithwaites",
+      "url": "https://www.laithwaites.com",
+      "selectors": {
+        "body": "body",
+        "mainContent": ".main-content"
+      }
+    },
+    "finisterre": {
+      "name": "Finisterre",
+      "url": "https://www.finisterrestore.com",
+      "selectors": {
+        "body": "body",
+        "mainContent": "[data-section='main']"
+      }
+    }
+  }
+}

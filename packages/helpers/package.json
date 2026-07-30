@@ -1,0 +1,25 @@
+{
+  "name": "@conversio/helpers",
+  "version": "0.1.0",
+  "description": "Shared helpers for Conversio CRO experiences",
+  "main": "dist/index.js",
+  "module": "src/index.js",
+  "exports": {
+    ".": {
+      "import": "./src/index.js",
+      "require": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "node build.js"
+  },
+  "keywords": [
+    "cro",
+    "a/b-testing",
+    "dom",
+    "tracking"
+  ],
+  "author": "Conversio",
+  "license": "UNLICENSED",
+  "private": true
+}

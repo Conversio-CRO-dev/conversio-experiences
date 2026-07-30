@@ -1,0 +1,24 @@
+{
+  "name": "@conversio/tester",
+  "version": "0.1.0",
+  "description": "Local tester CLI for Conversio CRO experiences",
+  "main": "src/index.js",
+  "bin": {
+    "tester": "./bin/tester"
+  },
+  "scripts": {
+    "start": "node src/index.js"
+  },
+  "keywords": [
+    "cro",
+    "tester",
+    "puppeteer",
+    "a/b-testing"
+  ],
+  "author": "Conversio",
+  "license": "UNLICENSED",
+  "private": true,
+  "dependencies": {
+    "@conversio/helpers": "*"
+  }
+}
