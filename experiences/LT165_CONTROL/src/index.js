@@ -1,24 +1,21 @@
-console.log("LT165 loaded v.3");
+console.log("LT165 CONTROL loaded");
 
-// Continuously watch and update minibasket button
+// Watch minibasket state - TRACKING ONLY, NO DOM CHANGES
 const watchMinibasketContinuously = () => {
   const observer = new MutationObserver(() => {
     const button = document.querySelector(".button-container a:nth-child(2) button");
     if (button) {
-      if (button.textContent !== "Secure Checkout") {
-        button.textContent = "Secure Checkout";
-        console.log("LT165 - Customer in minibasket");
-          adobeDataLayer.push({
-            "event": "targetClickEvent",
-            "eventData": {
-              "click": {
-                "clickLocation": "Conversio CRO",
-                "clickAction": "LT165 | Event Tracking",
-                "clickText": "LT165 (Variation 1) | Customer in minibasket"
-              }
-            }
-          });
-      }
+      console.log("LT165 - Customer in minibasket");
+      adobeDataLayer.push({
+        "event": "targetClickEvent",
+        "eventData": {
+          "click": {
+            "clickLocation": "Conversio CRO",
+            "clickAction": "LT165 | Event Tracking",
+            "clickText": "LT165 (Control Original) | Customer in minibasket"
+          }
+        }
+      });
 
       // View Basket click
       const viewBasketBtn = document.querySelector('.button-container a[href="/cart"] button');
@@ -31,12 +28,10 @@ const watchMinibasketContinuously = () => {
               "click": {
                 "clickLocation": "Conversio CRO",
                 "clickAction": "LT165 | Event Tracking",
-                "clickText": "LT165 (Variation 1) | Minibasket View Basket CTA click"
+                "clickText": "LT165 (Control Original) | Minibasket View Basket CTA click"
               }
             }
           });
-
-          
         });
         viewBasketBtn.dataset.ltTracked = "true";
       }
@@ -45,18 +40,16 @@ const watchMinibasketContinuously = () => {
       if (button && !button.dataset.ltCheckoutTracked) {
         button.addEventListener("click", () => {
           console.log("LT165 - Minibasket Checkout CTA click");
-
           adobeDataLayer.push({
             "event": "targetClickEvent",
             "eventData": {
               "click": {
                 "clickLocation": "Conversio CRO",
                 "clickAction": "LT165 | Event Tracking",
-                "clickText": "LT165 (Variation 1) | Minibasket Checkout CTA click"
+                "clickText": "LT165 (Control Original) | Minibasket Checkout CTA click"
               }
             }
           });
-
         });
         button.dataset.ltCheckoutTracked = "true";
       }
@@ -66,14 +59,13 @@ const watchMinibasketContinuously = () => {
       if (continueDesktop && !continueDesktop.dataset.ltTracked) {
         continueDesktop.addEventListener("click", () => {
           console.log("LT165 - Minibasket Continue Shopping CTA click");
-
           adobeDataLayer.push({
             "event": "targetClickEvent",
             "eventData": {
               "click": {
                 "clickLocation": "Conversio CRO",
                 "clickAction": "LT165 | Event Tracking",
-                "clickText": "LT165 (Variation 1) | Minibasket Continue Shopping CTA click"
+                "clickText": "LT165 (Control Original) | Minibasket Continue Shopping CTA click"
               }
             }
           });
@@ -85,17 +77,16 @@ const watchMinibasketContinuously = () => {
       if (continueMobile && !continueMobile.dataset.ltTracked) {
         continueMobile.addEventListener("click", () => {
           console.log("LT165 - Minibasket Continue Shopping CTA click");
-
           adobeDataLayer.push({
-          "event": "targetClickEvent",
-          "eventData": {
-            "click": {
-              "clickLocation": "Conversio CRO",
-              "clickAction": "LT165 | Event Tracking",
-              "clickText": "LT165 (Variation 1) | Minibasket Continue Shopping CTA click"
+            "event": "targetClickEvent",
+            "eventData": {
+              "click": {
+                "clickLocation": "Conversio CRO",
+                "clickAction": "LT165 | Event Tracking",
+                "clickText": "LT165 (Control Original) | Minibasket Continue Shopping CTA click"
+              }
             }
-          }
-        });
+          });
         });
         continueMobile.dataset.ltTracked = "true";
       }
@@ -108,44 +99,40 @@ const watchMinibasketContinuously = () => {
   });
 };
 
-// Continuously watch and update cart button
+// Watch basket state - TRACKING ONLY, NO DOM CHANGES
 const watchCartPageContinuously = () => {
   const observer = new MutationObserver(() => {
     const button = document.querySelector(".payment-checkout button");
     if (button) {
       const text = button.textContent;
-      if (text.includes("Checkout") && !text.includes("Secure")) {
-        const items = text.match(/\(.*\)/);
-        button.textContent = items ? `Secure Checkout ${items[0]}` : "Secure Checkout";
+      if (text.includes("Checkout")) {
         console.log("LT165 - Customer in basket");
-
         adobeDataLayer.push({
-  "event": "targetClickEvent",
-  "eventData": {
-    "click": {
-      "clickLocation": "Conversio CRO",
-      "clickAction": "LT165 | Event Tracking",
-      "clickText": "LT165 (Variation 1) | Customer in basket"
-    }
-  }
-});
+          "event": "targetClickEvent",
+          "eventData": {
+            "click": {
+              "clickLocation": "Conversio CRO",
+              "clickAction": "LT165 | Event Tracking",
+              "clickText": "LT165 (Control Original) | Customer in basket"
+            }
+          }
+        });
       }
 
       // Checkout click
       if (!button.dataset.ltTracked) {
         button.addEventListener("click", () => {
           console.log("LT165 - Basket Checkout CTA click");
-
           adobeDataLayer.push({
-  "event": "targetClickEvent",
-  "eventData": {
-    "click": {
-      "clickLocation": "Conversio CRO",
-      "clickAction": "LT165 | Event Tracking",
-      "clickText": "LT165 (Variation 1) | Basket Checkout CTA click"
-    }
-  }
-});
+            "event": "targetClickEvent",
+            "eventData": {
+              "click": {
+                "clickLocation": "Conversio CRO",
+                "clickAction": "LT165 | Event Tracking",
+                "clickText": "LT165 (Control Original) | Basket Checkout CTA click"
+              }
+            }
+          });
         });
         button.dataset.ltTracked = "true";
       }
@@ -163,88 +150,91 @@ document.addEventListener("click", (e) => {
   // Minibasket PDP clicks (trending items carousel)
   if (e.target.closest('a[data-atg="atg-link"]') && document.querySelector('[data-testid="trending-items"]')) {
     console.log("LT165 - Minibasket > PDP Click");
-
     adobeDataLayer.push({
-  "event": "targetClickEvent",
-  "eventData": {
-    "click": {
-      "clickLocation": "Conversio CRO",
-      "clickAction": "LT165 | Event Tracking",
-      "clickText": "LT165 (Variation 1) | Minibasket > PDP Click"
-    }
-  }
-});
+      "event": "targetClickEvent",
+      "eventData": {
+        "click": {
+          "clickLocation": "Conversio CRO",
+          "clickAction": "LT165 | Event Tracking",
+          "clickText": "LT165 (Control Original) | Minibasket > PDP Click"
+        }
+      }
+    });
   }
 
   // Quantity increase (plus button)
   if (e.target.closest('button[data-testid="plus-button"]')) {
     console.log("LT165 - Increases Quantity in basket");
     adobeDataLayer.push({
-  "event": "targetClickEvent",
-  "eventData": {
-    "click": {
-      "clickLocation": "Conversio CRO",
-      "clickAction": "LT165 | Event Tracking",
-      "clickText": "LT165 (Variation 1) | Increases Quantity in basket"
-    }
+      "event": "targetClickEvent",
+      "eventData": {
+        "click": {
+          "clickLocation": "Conversio CRO",
+          "clickAction": "LT165 | Event Tracking",
+          "clickText": "LT165 (Control Original) | Increases Quantity in basket"
+        }
+      }
+    });
   }
-});
-  }
+
   // Quantity decrease (minus button)
   if (e.target.closest('button[data-testid="minus-button"]')) {
     console.log("LT165 - Decreases Quantity in basket");
     adobeDataLayer.push({
-  "event": "targetClickEvent",
-  "eventData": {
-    "click": {
-      "clickLocation": "Conversio CRO",
-      "clickAction": "LT165 | Event Tracking",
-      "clickText": "LT165 (Variation 1) | Decreases Quantity in basket"
-    }
+      "event": "targetClickEvent",
+      "eventData": {
+        "click": {
+          "clickLocation": "Conversio CRO",
+          "clickAction": "LT165 | Event Tracking",
+          "clickText": "LT165 (Control Original) | Decreases Quantity in basket"
+        }
+      }
+    });
   }
-});
-  }
+
   // Remove item (product-delete div)
   if (e.target.closest('.product-delete')) {
     console.log("LT165 - Removes item from basket");
     adobeDataLayer.push({
-  "event": "targetClickEvent",
-  "eventData": {
-    "click": {
-      "clickLocation": "Conversio CRO",
-      "clickAction": "LT165 | Event Tracking",
-      "clickText": "LT165 (Variation 1) | Removes item from basket"
-    }
+      "event": "targetClickEvent",
+      "eventData": {
+        "click": {
+          "clickLocation": "Conversio CRO",
+          "clickAction": "LT165 | Event Tracking",
+          "clickText": "LT165 (Control Original) | Removes item from basket"
+        }
+      }
+    });
   }
-});
-  }
+
   // Basket PDP (product links - both h5 and button variants)
   if ((e.target.closest('h5.product-link') || e.target.closest('button.product-link')) && window.location.pathname === "/cart") {
     console.log("LT165 - Basket > PDP Click");
     adobeDataLayer.push({
-  "event": "targetClickEvent",
-  "eventData": {
-    "click": {
-      "clickLocation": "Conversio CRO",
-      "clickAction": "LT165 | Event Tracking",
-      "clickText": "LT165 (Variation 1) | Basket > PDP Click"
-    }
+      "event": "targetClickEvent",
+      "eventData": {
+        "click": {
+          "clickLocation": "Conversio CRO",
+          "clickAction": "LT165 | Event Tracking",
+          "clickText": "LT165 (Control Original) | Basket > PDP Click"
+        }
+      }
+    });
   }
-});
-  }
+
   // Basket Continue Shopping (span element)
   if (e.target.closest('span.continue-shopping-link') && window.location.pathname === "/cart") {
     console.log("LT165 - Basket Continue Shopping CTA click");
     adobeDataLayer.push({
-  "event": "targetClickEvent",
-  "eventData": {
-    "click": {
-      "clickLocation": "Conversio CRO",
-      "clickAction": "LT165 | Event Tracking",
-      "clickText": "LT165 (Variation 1) | Basket Continue Shopping CTA click"
-    }
-  }
-});
+      "event": "targetClickEvent",
+      "eventData": {
+        "click": {
+          "clickLocation": "Conversio CRO",
+          "clickAction": "LT165 | Event Tracking",
+          "clickText": "LT165 (Control Original) | Basket Continue Shopping CTA click"
+        }
+      }
+    });
   }
 });
 
