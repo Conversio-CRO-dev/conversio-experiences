@@ -5,8 +5,8 @@ const watchMinibasketContinuously = () => {
   const observer = new MutationObserver(() => {
     const button = document.querySelector(".button-container a:nth-child(2) button");
     if (button) {
-      if (button.textContent !== "Secure Checkout") {
-        button.textContent = "Secure Checkout";
+      if (button.textContent !== "SECURE CHECKOUT") {
+        button.textContent = "SECURE CHECKOUT";
         console.log("LT165 - Customer in minibasket");
           adobeDataLayer.push({
             "event": "targetClickEvent",
@@ -36,7 +36,7 @@ const watchMinibasketContinuously = () => {
             }
           });
 
-          
+
         });
         viewBasketBtn.dataset.ltTracked = "true";
       }
@@ -114,9 +114,9 @@ const watchCartPageContinuously = () => {
     const button = document.querySelector(".payment-checkout button");
     if (button) {
       const text = button.textContent;
-      if (text.includes("Checkout") && !text.includes("Secure")) {
+      if (text.includes("Checkout") && !text.includes("SECURE")) {
         const items = text.match(/\(.*\)/);
-        button.textContent = items ? `Secure Checkout ${items[0]}` : "Secure Checkout";
+        button.textContent = items ? `SECURE CHECKOUT ${items[0]}` : "SECURE CHECKOUT";
         console.log("LT165 - Customer in basket");
 
         adobeDataLayer.push({
