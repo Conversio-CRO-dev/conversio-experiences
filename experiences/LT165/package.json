@@ -1,0 +1,14 @@
+{
+  "name": "experience-lt165",
+  "version": "0.1.0",
+  "description": "Conversio CRO experience: LT165",
+  "client": "laithwaites",
+  "scripts": {
+    "build": "npm run build:experience -- LT165",
+    "test": "npm run tester -- test LT165"
+  },
+  "private": true,
+  "dependencies": {
+    "@conversio/helpers": "*"
+  }
+}
