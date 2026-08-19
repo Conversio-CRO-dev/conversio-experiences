@@ -29,7 +29,8 @@ if (fs.existsSync(experiencePath)) {
 }
 
 fs.mkdirSync(experiencePath, { recursive: true });
-fs.mkdirSync(path.join(experiencePath, 'src'), { recursive: true });
+
+const variations = ['variation-1', 'variation-2', 'control'];
 
 const packageJson = {
   name: `experience-${experienceCode.toLowerCase()}`,
@@ -37,8 +38,12 @@ const packageJson = {
   description: `Conversio CRO experience: ${experienceCode}`,
   client: client,
   scripts: {
-    build: 'npm run build:experience -- ' + experienceCode,
-    test: 'npm run tester -- test ' + experienceCode,
+    'build:v1': `npm run build:experience -- ${experienceCode} variation-1`,
+    'build:v2': `npm run build:experience -- ${experienceCode} variation-2`,
+    'build:control': `npm run build:experience -- ${experienceCode} control`,
+    'test:v1': `node test.js ${experienceCode} variation-1`,
+    'test:v2': `node test.js ${experienceCode} variation-2`,
+    'test:control': `node test.js ${experienceCode} control`,
   },
   private: true,
   dependencies: {
@@ -51,7 +56,13 @@ fs.writeFileSync(
   JSON.stringify(packageJson, null, 2)
 );
 
-const indexJs = `console.log('${experienceCode} loaded');
+variations.forEach((variation) => {
+  const varPath = path.join(experiencePath, variation);
+  const srcPath = path.join(varPath, 'src');
+
+  fs.mkdirSync(srcPath, { recursive: true });
+
+  const indexJs = `console.log('${experienceCode} - ${variation} loaded');
 
 // Write your plain JavaScript here
 // No imports needed - just vanilla JS
@@ -97,14 +108,14 @@ waitForElement('body')
 if (window.dataLayer) {
   window.dataLayer.push({
     event: 'conversioEvent',
-    conversioEventName: '${experienceCode.toUpperCase()}_LOADED',
+    conversioEventName: '${experienceCode.toUpperCase()}_${variation.toUpperCase()}_LOADED',
   });
 }
 `;
 
-fs.writeFileSync(path.join(experiencePath, 'src', 'index.js'), indexJs);
+  fs.writeFileSync(path.join(srcPath, 'index.js'), indexJs);
 
-const stylesScss = `// ${experienceCode} Styles
+  const stylesScss = `// ${experienceCode} - ${variation} Styles
 // Auto-compiled and injected into the page
 
 // Use SCSS features: variables, mixins, nesting
@@ -125,44 +136,65 @@ $padding-m: 20px;
 // }
 `;
 
-fs.writeFileSync(path.join(experiencePath, 'src', 'styles.scss'), stylesScss);
+  fs.writeFileSync(path.join(srcPath, 'styles.scss'), stylesScss);
 
-const webpackConfig = `const path = require('path');
-const baseConfig = require('../../config/webpack.experience.js');
+  const webpackConfig = `const path = require('path');
+const baseConfig = require('../../../config/webpack.experience.js');
 
 module.exports = {
-  ...baseConfig('${experienceCode}'),
+  ...baseConfig('${experienceCode}', '${variation}'),
   // Override base config here if needed
 };
 `;
 
-fs.writeFileSync(path.join(experiencePath, 'webpack.config.js'), webpackConfig);
+  fs.writeFileSync(path.join(varPath, 'webpack.config.js'), webpackConfig);
+});
 
 const readme = `# ${experienceCode}
 
 Experience for: **${client}**
 
-## Development
+## Structure
 
-\`\`\`bash
-npm run test
+\`\`\`
+${experienceCode}/
+├── variation-1/
+│   ├── src/
+│   │   ├── index.js
+│   │   └── styles.scss
+│   └── webpack.config.js
+├── variation-2/
+│   ├── src/
+│   │   ├── index.js
+│   │   └── styles.scss
+│   └── webpack.config.js
+├── control/
+│   ├── src/
+│   │   ├── index.js
+│   │   └── styles.scss
+│   └── webpack.config.js
+└── package.json
 \`\`\`
 
-This launches a Puppeteer browser with hot-reload. Edit files in \`src/\` and they'll auto-inject.
+## Development
+
+Test a specific variation:
+
+\`\`\`bash
+npm run test:v1    # Test variation 1
+npm run test:v2    # Test variation 2
+npm run test:control  # Test control
+\`\`\`
 
 ## Build
 
+Build a specific variation:
+
 \`\`\`bash
-npm run build
+npm run build:v1    # Build variation 1
+npm run build:v2    # Build variation 2
+npm run build:control  # Build control
 \`\`\`
-
-Output: \`dist/${experienceCode}/main.js\`
-
-## Structure
-
-- \`src/index.js\` - Entry point, wrapped in \`init()\` helper
-- \`src/styles.scss\` - Styles (auto-injected via webpack)
-- \`webpack.config.js\` - Extends shared config
 
 ## Conventions
 
@@ -176,8 +208,14 @@ fs.writeFileSync(path.join(experiencePath, 'README.md'), readme);
 console.log(`
 Created: ${experiencePath}
 
+Structure:
+  ${experienceCode}/
+  ├── variation-1/
+  ├── variation-2/
+  └── control/
+
 Next:
   cd experiences/${experienceCode}
   npm install
-  npm run test
+  npm run test:v1
 `);

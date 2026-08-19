@@ -24,36 +24,49 @@ function getClientUrl() {
   }
 }
 
-const [,, experienceCode, urlArg] = process.argv;
+const [, , experienceCode, variationOrUrl, urlArg] = process.argv;
 
 if (!experienceCode) {
-  console.log('\nUsage:   node test.js <CODE> [url]');
-  console.log('Example: node test.js CNV001');
-  console.log('         node test.js CNV001 https://www.example.com/some-page\n');
+  console.log('\nUsage:   node test.js <CODE> <VARIATION> [url]');
+  console.log('Example: node test.js CNV001 variation-1');
+  console.log('         node test.js CNV001 variation-1 https://www.example.com/some-page\n');
   process.exit(1);
 }
 
-const experiencePath = path.join(__dirname, 'experiences', experienceCode);
+// Determine if second arg is variation or URL
+let variation = 'variation-1';
+let urlArg_ = variationOrUrl;
+
+if (variationOrUrl && (variationOrUrl.startsWith('http://') || variationOrUrl.startsWith('https://'))) {
+  // Second arg is URL, use default variation
+  urlArg_ = variationOrUrl;
+} else if (variationOrUrl) {
+  // Second arg is variation
+  variation = variationOrUrl;
+  urlArg_ = urlArg;
+}
+
+const experiencePath = path.join(__dirname, 'experiences', experienceCode, variation);
 const jsPath = path.join(experiencePath, 'src', 'index.js');
 const scssPath = path.join(experiencePath, 'src', 'styles.scss');
 
 if (!fs.existsSync(experiencePath)) {
-  console.error(`\nExperience not found: experiences/${experienceCode}`);
+  console.error(`\nExperience not found: experiences/${experienceCode}/${variation}`);
   process.exit(1);
 }
 
 if (!fs.existsSync(jsPath)) {
-  console.error(`\nJS file not found: experiences/${experienceCode}/src/index.js`);
+  console.error(`\nJS file not found: experiences/${experienceCode}/${variation}/src/index.js`);
   process.exit(1);
 }
 
 const { url: clientUrl, branch, prefix } = getClientUrl();
-const url = urlArg || clientUrl;
+const url = urlArg_ || clientUrl;
 
 if (!url) {
   console.error(`\nNo URL found for branch "${branch}" (prefix: ${prefix}).`);
   console.error(`Add it to clients.json or pass a URL manually:\n`);
-  console.error(`  node test.js ${variation} https://www.example.com\n`);
+  console.error(`  node test.js ${experienceCode} ${variation} https://www.example.com\n`);
   process.exit(1);
 }
 
@@ -90,7 +103,7 @@ async function inject(page) {
   await page.addScriptTag({ content: js });
 
   const label = css ? 'JS + CSS' : 'JS only (no SCSS found or empty)';
-  console.log(`  Injected ${experienceCode} [${label}]`);
+  console.log(`  Injected ${experienceCode} [${variation}] [${label}]`);
 }
 
 (async () => {
@@ -138,8 +151,9 @@ async function inject(page) {
   Branch:      ${branch}
   Client:      ${prefix} → ${url}
   Experience:  ${experienceCode}
-  JS:          experiences/${experienceCode}/src/index.js
-  SCSS:        ${fs.existsSync(scssPath) ? `experiences/${experienceCode}/src/styles.scss` : 'none'}
+  Variation:   ${variation}
+  JS:          experiences/${experienceCode}/${variation}/src/index.js
+  SCSS:        ${fs.existsSync(scssPath) ? `experiences/${experienceCode}/${variation}/src/styles.scss` : 'none'}
 
   Watching for file changes — saves auto-reload.
   Close the browser to stop.
