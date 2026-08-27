@@ -1,4 +1,4 @@
-console.log('FN092 - variation-1 loaded');
+console.log("FN092 - variation-1 loaded v.s");
 
 // Write your plain JavaScript here
 // No imports needed - just vanilla JS
@@ -33,17 +33,17 @@ const waitForElement = (selector, timeout = 5000) => {
 };
 
 // Example: Modify the page
-waitForElement('body')
+waitForElement("body")
   .then(() => {
-    console.log('Body found, ready to modify');
+    console.log("Body found, ready to modify");
     // Add your code here
   })
-  .catch(err => console.error('Error:', err));
+  .catch((err) => console.error("Error:", err));
 
 // Example: Send tracking event
 if (window.dataLayer) {
   window.dataLayer.push({
-    event: 'conversioEvent',
-    conversioEventName: 'FN092_VARIATION-1_LOADED',
+    event: "conversioEvent",
+    conversioEventName: "FN092_VARIATION-1_LOADED",
   });
 }
