@@ -1,70 +1,56 @@
-const fs = require('fs');
 const path = require('path');
-const { loadClients } = require('./clients.js');
+const { resolveClient, root } = require('../../../scripts/lib/experience.js');
 const { buildExperience } = require('./experience-builder.js');
 const { runTester } = require('./puppeteer-tester.js');
 
-const args = process.argv.slice(2);
-const command = args[0];
-const experienceCode = args[1];
+const [command, code, variationOrUrl, urlArg] = process.argv.slice(2);
 
-if (!command || !experienceCode) {
+if (!command || !code) {
   console.log(`
-Conversio CRO Tester CLI
+Conversio CRO Tester CLI. Builds the experience with webpack, then (for test) injects the built file,
+which is what gets pasted into the testing tool. For quick work while building, use: node test.js
 
 Usage:
-  tester build <CODE>           Build an experience
-  tester test <CODE>            Test an experience locally
+  tester build <CODE> [variation]
+  tester test <CODE> [variation] [url]
 
 Examples:
-  tester build WN003
-  tester test WN003
+  tester build FN092 variation-1
+  tester test FN092 control
   `);
   process.exit(1);
 }
 
-const monorepoRoot = path.resolve(__dirname, '../../..');
-const experiencePath = path.resolve(monorepoRoot, 'experiences', experienceCode);
-if (!fs.existsSync(experiencePath)) {
-  console.error(`Error: Experience "${experienceCode}" not found at ${experiencePath}`);
-  console.error('Run: npm run scaffold -- <CODE> --client=<CLIENT>');
-  process.exit(1);
-}
-
-const pkgPath = path.join(experiencePath, 'package.json');
-const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8'));
-const clientCode = pkg.client;
-
-if (!clientCode) {
-  console.error(`Error: No client defined in ${pkgPath}`);
-  console.error('Add "client" field to package.json');
-  process.exit(1);
-}
-
-const clients = loadClients();
-const client = clients[clientCode];
-
-if (!client) {
-  console.error(`Error: Client "${clientCode}" not found in config/clients.json`);
-  process.exit(1);
+let variation;
+let givenUrl = urlArg;
+if (variationOrUrl && /^https?:\/\//.test(variationOrUrl)) {
+  givenUrl = variationOrUrl;
+} else {
+  variation = variationOrUrl;
 }
 
 if (command === 'build') {
-  buildExperience(experienceCode, experiencePath)
-    .then(() => {
-      console.log(`\nBuilt: dist/${experienceCode}/main.js`);
+  buildExperience(code, variation)
+    .then((result) => {
+      console.log(`\nBuilt: ${path.relative(root, result.file)}`);
     })
-    .catch(err => {
+    .catch((err) => {
       console.error('Build failed:', err.message);
       process.exit(1);
     });
 } else if (command === 'test') {
-  console.log(`Testing ${experienceCode} on ${client.name}...`);
-  runTester(experienceCode, experiencePath, client)
-    .catch(err => {
-      console.error('Tester failed:', err.stack || err.message || err);
-      process.exit(1);
-    });
+  const client = resolveClient(code, givenUrl);
+
+  if (!client.url) {
+    console.error(`Error: no site found for ${code}. Add its prefix to clients.json or pass a URL.`);
+    process.exit(1);
+  }
+
+  console.log(`Testing ${code}${variation ? ' ' + variation : ''} on ${client.url}...`);
+  runTester(code, variation, client.url).catch((err) => {
+    console.error('Tester failed:', err.stack || err.message || err);
+    process.exit(1);
+  });
 } else {
   console.error(`Unknown command: ${command}`);
   process.exit(1);

@@ -1,27 +1,34 @@
 const webpack = require('webpack');
 const path = require('path');
 const fs = require('fs');
+const { locate, root } = require('../../../scripts/lib/experience.js');
 
-function buildExperience(experienceCode, experiencePath) {
+// Builds one folder of an experience (a variation or the control) and resolves with the output file.
+// styles.scss is not imported by index.js, so it is added as a second entry: without that the built
+// file would have no CSS.
+function buildExperience(code, variation) {
   return new Promise((resolve, reject) => {
-    const monorepoRoot = path.resolve(__dirname, '../../..');
-    const configPath = path.join(monorepoRoot, 'config/webpack.experience.js');
-    const getBaseConfig = require(configPath);
-
-    const experienceWebpackPath = path.join(experiencePath, 'webpack.config.js');
-    let config;
-
-    if (fs.existsSync(experienceWebpackPath)) {
-      config = require(experienceWebpackPath);
-    } else {
-      config = getBaseConfig(experienceCode);
+    let target;
+    try {
+      target = locate(code, variation);
+    } catch (err) {
+      reject(err);
+      return;
     }
 
-    // Set context to experience directory so ./src/index.js resolves correctly
-    config.context = experiencePath;
+    const getBaseConfig = require(path.join(root, 'config/webpack.experience.js'));
+    const ownConfigPath = path.join(target.folder, 'webpack.config.js');
+    const config = Object.assign(
+      {},
+      fs.existsSync(ownConfigPath) ? require(ownConfigPath) : getBaseConfig(code, target.variation)
+    );
 
-    const compiler = webpack(config);
-    compiler.run((err, stats) => {
+    config.context = target.folder;
+    config.entry = fs.existsSync(target.scss)
+      ? ['./src/index.js', './src/styles.scss']
+      : './src/index.js';
+
+    webpack(config).run((err, stats) => {
       if (err) {
         reject(err);
         return;
@@ -29,15 +36,17 @@ function buildExperience(experienceCode, experiencePath) {
 
       if (stats.hasErrors()) {
         const errors = stats.toJson().errors;
-        const errorMsg = errors.map(e => {
-          if (typeof e === 'string') return e;
-          return e.message || JSON.stringify(e);
-        }).join('\n');
-        reject(new Error(errorMsg));
+        reject(
+          new Error(
+            errors
+              .map((e) => (typeof e === 'string' ? e : e.message || JSON.stringify(e)))
+              .join('\n')
+          )
+        );
         return;
       }
 
-      resolve();
+      resolve({ file: path.join(config.output.path, config.output.filename), target });
     });
   });
 }

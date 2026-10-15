@@ -5,89 +5,67 @@ const sass = require('sass');
 const chokidar = require('chokidar');
 const fs = require('fs');
 const path = require('path');
-const { execSync } = require('child_process');
-
-const clients = require('./clients.json');
-
-function getClientUrl() {
-  try {
-    const branch = execSync('git branch --show-current', { encoding: 'utf8' }).trim();
-    const prefix = branch.match(/^[A-Za-z]+/)?.[0]?.toUpperCase();
-
-    if (prefix && clients[prefix]) {
-      return { url: clients[prefix], branch, prefix };
-    }
-
-    return { url: null, branch, prefix };
-  } catch (_) {
-    return { url: null, branch: null, prefix: null };
-  }
-}
+const { locate, resolveClient, checkSource, root } = require('./scripts/lib/experience.js');
 
 const [, , experienceCode, variationOrUrl, urlArg] = process.argv;
 
 if (!experienceCode) {
-  console.log('\nUsage:   node test.js <CODE> <VARIATION> [url]');
-  console.log('Example: node test.js CNV001 variation-1');
-  console.log('         node test.js CNV001 variation-1 https://www.example.com/some-page\n');
+  console.log('\nUsage:   node test.js <CODE> [variation] [url]');
+  console.log('Example: node test.js FN092 variation-1');
+  console.log('         node test.js FN092 control');
+  console.log('         node test.js FN092 variation-1 https://www.example.com/some-page\n');
   process.exit(1);
 }
 
-// Determine if second arg is variation or URL
-let variation = 'variation-1';
-let urlArg_ = variationOrUrl;
-
-if (variationOrUrl && (variationOrUrl.startsWith('http://') || variationOrUrl.startsWith('https://'))) {
-  // Second arg is URL, use default variation
-  urlArg_ = variationOrUrl;
-} else if (variationOrUrl) {
-  // Second arg is variation
+// The second argument is a variation folder, or a URL when the default variation is wanted.
+let variation;
+let givenUrl = urlArg;
+if (variationOrUrl && /^https?:\/\//.test(variationOrUrl)) {
+  givenUrl = variationOrUrl;
+} else {
   variation = variationOrUrl;
-  urlArg_ = urlArg;
 }
 
-const experiencePath = path.join(__dirname, 'experiences', experienceCode, variation);
-const jsPath = path.join(experiencePath, 'src', 'index.js');
-const scssPath = path.join(experiencePath, 'src', 'styles.scss');
-
-if (!fs.existsSync(experiencePath)) {
-  console.error(`\nExperience not found: experiences/${experienceCode}/${variation}`);
+let target;
+try {
+  target = locate(experienceCode, variation);
+} catch (err) {
+  console.error(`\n${err.message}\n`);
   process.exit(1);
 }
 
-if (!fs.existsSync(jsPath)) {
-  console.error(`\nJS file not found: experiences/${experienceCode}/${variation}/src/index.js`);
+const client = resolveClient(experienceCode, givenUrl);
+if (!client.url) {
+  console.error(`\nNo site found for ${experienceCode} (prefix: ${client.prefix || 'none'}, branch: ${client.branch || 'none'}).`);
+  console.error('Add the prefix to clients.json or pass a URL:\n');
+  console.error(`  node test.js ${experienceCode} ${target.variation || ''} https://www.example.com\n`);
   process.exit(1);
 }
 
-const { url: clientUrl, branch, prefix } = getClientUrl();
-const url = urlArg_ || clientUrl;
-
-if (!url) {
-  console.error(`\nNo URL found for branch "${branch}" (prefix: ${prefix}).`);
-  console.error(`Add it to clients.json or pass a URL manually:\n`);
-  console.error(`  node test.js ${experienceCode} ${variation} https://www.example.com\n`);
-  process.exit(1);
-}
+const label = target.variation || '(single folder)';
+const relativeJs = path.relative(root, target.js);
+const relativeScss = path.relative(root, target.scss);
 
 function getJS() {
-  let code = fs.readFileSync(jsPath, 'utf8');
-  // Remove import/export statements for direct injection
-  code = code.replace(/^import\s+.*?from\s+['"].*?['"];?$/gm, '');
-  code = code.replace(/^export\s+/gm, '');
+  const code = fs.readFileSync(target.js, 'utf8');
+  const { problems, warnings } = checkSource(code);
+
+  warnings.forEach((w) => console.warn(`  Warning: ${w}`));
+  if (problems.length) {
+    throw new Error(problems.join(' '));
+  }
   return code;
 }
 
 function getCSS() {
-  if (!fs.existsSync(scssPath)) return null;
-  const content = fs.readFileSync(scssPath, 'utf8').trim();
+  if (!fs.existsSync(target.scss)) return null;
+  const content = fs.readFileSync(target.scss, 'utf8').trim();
   if (!content) return null;
 
   try {
-    const result = sass.compile(scssPath);
-    return result.css;
+    return sass.compile(target.scss).css;
   } catch (err) {
-    console.error('SCSS compile error:', err.message);
+    console.error('  SCSS compile error:', err.message);
     return null;
   }
 }
@@ -101,16 +79,14 @@ async function inject(page) {
   }
 
   await page.addScriptTag({ content: js });
-
-  const label = css ? 'JS + CSS' : 'JS only (no SCSS found or empty)';
-  console.log(`  Injected ${experienceCode} [${variation}] [${label}]`);
+  console.log(`  Injected ${experienceCode} [${label}] [${css ? 'JS + CSS' : 'JS only'}]`);
 }
 
 (async () => {
   const browser = await puppeteer.launch({
     headless: false,
     defaultViewport: null,
-    args: ['--start-maximized']
+    args: ['--start-maximized'],
   });
 
   const [page] = await browser.pages();
@@ -126,17 +102,17 @@ async function inject(page) {
     try {
       await inject(page);
     } catch (err) {
-      console.error('  Injection failed:', err.message);
+      console.error('  Not injected:', err.message);
     }
   });
 
-  console.log(`\n  Opening: ${url}`);
-  await page.goto(url, { waitUntil: 'domcontentloaded' });
+  console.log(`\n  Opening: ${client.url}`);
+  await page.goto(client.url, { waitUntil: 'domcontentloaded' });
 
-  const watchPaths = [jsPath, scssPath].filter(fs.existsSync);
+  const watchPaths = [target.js, target.scss].filter(fs.existsSync);
 
   chokidar.watch(watchPaths, { ignoreInitial: true }).on('change', async (file) => {
-    console.log(`\n  Changed: ${path.basename(file)} — reloading...`);
+    console.log(`\n  Changed: ${path.basename(file)}, reloading...`);
     try {
       await page.reload({ waitUntil: 'domcontentloaded' });
     } catch (_) {}
@@ -148,14 +124,12 @@ async function inject(page) {
   });
 
   console.log(`
-  Branch:      ${branch}
-  Client:      ${prefix} → ${url}
-  Experience:  ${experienceCode}
-  Variation:   ${variation}
-  JS:          experiences/${experienceCode}/${variation}/src/index.js
-  SCSS:        ${fs.existsSync(scssPath) ? `experiences/${experienceCode}/${variation}/src/styles.scss` : 'none'}
+  Experience:  ${experienceCode} [${label}]
+  Site:        ${client.prefix || 'url'} (from ${client.source}) ${client.url}
+  JS:          ${relativeJs}
+  SCSS:        ${fs.existsSync(target.scss) ? relativeScss : 'none'}
 
-  Watching for file changes — saves auto-reload.
+  Watching for file changes: saves auto-reload.
   Close the browser to stop.
   `);
 })();
