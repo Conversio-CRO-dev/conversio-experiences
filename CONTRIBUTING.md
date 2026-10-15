@@ -18,16 +18,16 @@ npm install
    - Styles in `styles.scss` in the same folder (compiled and injected for you).
    - The scaffold gives a one-line starter. Add the guard, `logEvent` and `elementReady` from the skeleton in `.claude/skills/build-experience/SKILL.md`.
 5. **Tracking.** While building, `logEvent` only logs to the console. When the experience works, paste in the events from the event generator app and replace the logging with them. Put the same events in the control, with the control label.
-6. **Finish.** Remove every `console` line. Then build and check the built file:
+6. **Finish.** Remove every `console` line. Then compile the CSS and check the source:
    ```bash
    npm run build:experience -- FN092
-   npm run tester -- test FN092 variation-1
    ```
-7. **Ship.** Paste `dist/FN092/<variation>/main.js` (JS and CSS together) into the client's testing tool: Dynamic Yield, Adobe Target or AB Tasty. Check the preview, and reload to make sure it is the latest save.
+   It writes `dist/FN092/<folder>/styles.css` for each folder that has styles, and warns about `${` or imports in the source. (It also writes `main.js`. Ignore it, it is not pasted.)
+7. **Ship.** Paste `experiences/FN092/<folder>/src/index.js` exactly as it is into the client's testing tool (Dynamic Yield, Adobe Target or AB Tasty), and `dist/FN092/<folder>/styles.css` too if there is one. Check the preview, and reload to make sure it is the latest save.
 
 ## Rules
 
-- Never write `${...}` in what you paste. Dynamic Yield and Adobe Target do not support it (the build prints a warning if the built file has any).
+- Never write `${...}` in the file. Dynamic Yield and Adobe Target do not support it, and the file is pasted as written. Build strings with `+`. (`test.js` and the build warn about it.)
 - Guard the script so a second run does nothing: `if (!window.__fn092Initialized) { ... }`.
 - If your code clicks a button itself, check `event.isTrusted` in the tracking listener so only real clicks count.
 - Avoid hashed `css-*` class names in selectors (they change on every site deploy). Use `data-testid` or stable classes.

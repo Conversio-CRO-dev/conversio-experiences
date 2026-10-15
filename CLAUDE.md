@@ -9,11 +9,11 @@ A shared repo for building experiences that are delivered through the client's t
 | `experiences/<ID>/variation-1/src/index.js` | The variation. Plain browser JavaScript, no imports (`test.js` refuses a file that has them). |
 | `experiences/<ID>/variation-2/src/index.js` | Second variation, if the ticket has one. |
 | `experiences/<ID>/control/src/index.js` | The control. Tracking only, same events, no page changes. |
-| `experiences/<ID>/<folder>/src/styles.scss` | CSS for that folder. `test.js` compiles and injects it; the build bundles it into `main.js`. |
+| `experiences/<ID>/<folder>/src/styles.scss` | CSS for that folder, if it has any. `test.js` compiles and injects it; the build writes the compiled `dist/<ID>/<folder>/styles.css`. |
 | `experiences/<ID>/package.json`, `<folder>/webpack.config.js` | Made by the scaffold. Leave them. |
 | `clients.json` | Prefix to client site URL. The only client list. |
 | `scripts/scaffold.js`, `scripts/build.js`, `scripts/lib/experience.js` | Scaffold, build, and the shared lookup of experiences and sites. |
-| `packages/tester` | `npm run tester -- test <ID> <folder>`: builds, then injects the built file. |
+| `packages/tester` | `npm run tester -- test <ID> <folder>`: bundles the folder with webpack, then injects the bundle. An extra check. The bundle is not what gets pasted. |
 | `packages/helpers` | Optional shared helpers (`elementReady`, `init`, ...). Experiences do not import them. |
 
 Older experiences keep `src/` at the top of their folder (no variation folders). The scripts handle both.
@@ -41,7 +41,7 @@ Maps a prefix to the client's site, e.g. `"FN": "https://www.finisterre.com"`. `
 Shapes the generator has produced so far, for reference only (the pasted snippet wins):
 
 - Laithwaites: `adobeDataLayer.push({ event: "targetClickEvent", eventData: { click: { clickLocation: "Conversio CRO", clickAction: "<ID> | Event Tracking", clickText: "<ID> (Variation 1) | <Event name>" } } })`, no segment.
-- Others: `dataLayer.push({ event: "conversioEvent", conversio: { category "Conversio CRO", action "<ID> | Event Tracking", label, segment } })`. The keys are camelCase (`eventCategory`) on FN, TS and most BM, and snake_case (`event_category`) on WN, SA and SY.
+- Others: `dataLayer.push({ event: "conversioEvent", conversio: { category: "Conversio CRO", action: "<ID> | Event Tracking", label: ..., segment: ... } })`. The keys are camelCase (`eventCategory`) on FN, TS and most BM, and snake_case (`event_category`) on WN, SA and SY.
 - Some tests (SA, SY, BM258) also push an experience event on load (`conversioExperience` or `conversio_experience`, with `experience_*` keys). Only if the ticket asks.
 
 ## A finished experience
@@ -49,16 +49,18 @@ Shapes the generator has produced so far, for reference only (the pasted snippet
 - A `variation-1` folder (and `variation-2` if the ticket has one) and a `control` folder.
 - Every event in the ticket's list is in the variation and the control, with the exact label and segment from the event generator.
 - Guarded, runs once, leaves non-target pages alone.
-- No `${...}` in what is pasted. Dynamic Yield and Adobe Target do not support it, and AB Tasty is not confirmed, so avoid it everywhere. The build turns template literals into plain concatenation and warns if `${` is left in the built file.
+- No `${...}` in the file. Dynamic Yield and Adobe Target do not support it, and AB Tasty is not confirmed, so avoid it everywhere. The file is pasted as written and nothing converts it: build strings with `+`. `test.js` and the build warn if `${` is there.
 - No `console` lines left. Use them while testing, then remove every one before it goes out for testing.
+- Ready to paste: the folder's `src/index.js` exactly as it is, and `dist/<ID>/<folder>/styles.css` if the folder has styles.
 
 ## Run
 
 - `npm install` once.
 - `npm run scaffold -- <ID> [--client=<PREFIX>]` creates `variation-1`, `variation-2` and `control`, each with a one-line starter. Delete the folders the ticket does not need. The client comes from the code's prefix.
 - `node test.js <ID> <folder> [url]` opens Chrome on the client's site and injects that folder's `index.js` and compiled `styles.scss` on every page load. It reloads on save and prints the page's console in the terminal. `<folder>` is `variation-1`, `variation-2` or `control` (default `variation-1`).
-- `npm run build:experience -- <ID> [folder]` writes `dist/<ID>/<folder>/main.js` (JS and CSS in one file), for every folder if none is named. That file is what gets pasted into the testing tool. **TBC** (confirm it is pasted built, not as source)
-- `npm run tester -- test <ID> <folder>` builds, then injects the built file. Use it as the last check.
+- `npm run build:experience -- <ID> [folder]` compiles the folder's SCSS to `dist/<ID>/<folder>/styles.css` (every folder if none is named) and warns about `${` or imports in the source. It also writes `main.js`, a webpack bundle for the tester package. Do not paste that.
+- What goes into the testing tool: the folder's `src/index.js` as it is, and the `styles.css` if the build wrote one. Nothing is bundled or changed for you.
+- `npm run tester -- test <ID> <folder>` injects the webpack bundle. Optional: `node test.js` already injects what you paste.
 - There is no automated test suite. Check by hand, as set out in the skill.
 
 ## Gotchas

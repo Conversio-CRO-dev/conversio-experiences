@@ -95,6 +95,7 @@ function resolveClient(code, urlArg) {
   return { url: null, prefix: prefixOf(code), source: null, branch };
 }
 
+// The source file is pasted into the testing tool exactly as written, so nothing converts it.
 // test.js injects plain JavaScript, so imports cannot work there. Say so, rather than strip them
 // and leave something undefined at run time.
 function checkSource(code) {
@@ -108,11 +109,19 @@ function checkSource(code) {
   }
   if (code.indexOf('${') !== -1) {
     warnings.push(
-      'found ${...}. Dynamic Yield and Adobe Target do not support it. Use string concatenation, or check the built file has none.'
+      'found ${...}. Dynamic Yield and Adobe Target do not support it, and the file is pasted as written. Use string concatenation.'
     );
   }
 
   return { problems, warnings };
+}
+
+// The CSS that gets pasted: the folder's styles.scss compiled the same way test.js compiles it.
+// Returns null when there is no styles.scss, or it has nothing in it but comments.
+function compileCss(scssPath) {
+  if (!fs.existsSync(scssPath)) return null;
+  const css = require('sass').compile(scssPath).css;
+  return css.trim() ? css : null;
 }
 
 module.exports = {
@@ -125,4 +134,5 @@ module.exports = {
   prefixOf,
   resolveClient,
   checkSource,
+  compileCss,
 };

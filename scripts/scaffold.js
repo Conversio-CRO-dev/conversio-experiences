@@ -111,9 +111,13 @@ npm run test:v1       # or test:v2, test:control
 ## Build
 
 \`\`\`bash
-npm run build         # every folder: dist/${experienceCode}/<folder>/main.js
+npm run build         # every folder: compiles the CSS to dist/${experienceCode}/<folder>/styles.css
 npm run build:v1      # or build:v2, build:control
 \`\`\`
+
+## Ship
+
+Paste <folder>/src/index.js into the testing tool exactly as it is, and dist/${experienceCode}/<folder>/styles.css if the build wrote one.
 
 ## Conventions
 

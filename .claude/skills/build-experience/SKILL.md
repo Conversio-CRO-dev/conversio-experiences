@@ -82,7 +82,7 @@ if (!window.__<id>Initialized) {
 - Plain JavaScript, no imports: `test.js` refuses a file that has them. Write helpers in the file.
 - Wait for elements with `elementReady(selector, timeout)` (a `MutationObserver`), not a fixed delay.
 - Make every DOM change safe to repeat: check before inserting, give your `<style>` an id (`<id>-...-styles`) and add it once, prefix the classes you add with the test ID.
-- Never write `${...}` in what is pasted. Dynamic Yield and Adobe Target do not support it. Build strings with `+`. (`test.js` warns about it, and the build warns if the built file has it.)
+- Never write `${...}` in what is pasted. Dynamic Yield and Adobe Target do not support it. Build strings with `+`. The file is pasted as written and nothing converts it. (`test.js` and the build warn about it.)
 - Use the breakpoints and numbers from Figma, not the page's.
 - Phones: form fields at 16px or more, a high `z-index` on fixed buttons, and no class toggling on `<html>` from a resize handler. See the gotchas in `CLAUDE.md`.
 
@@ -105,5 +105,5 @@ Run through all of these before calling it done:
 - [ ] `node test.js <ID> control` sends the same events with the control label, and the page is unchanged.
 - [ ] Pages the experience is not meant for are untouched.
 - [ ] Last step, once everything works: remove every `console` line (the event logging included).
-- [ ] `npm run build:experience -- <ID>` prints no warning. Then `npm run tester -- test <ID> variation-1` and check the built file behaves the same: it has the CSS, and no `${` is left.
-- [ ] Paste the built file into the testing tool's preview and check there too (`test.js` injects after load, so it hides flicker and early-run problems). Previews can serve an older save: reload and confirm you are on the latest.
+- [ ] `npm run build:experience -- <ID>` prints no warning, and lists `styles.css` for every folder that has styles.
+- [ ] Paste `src/index.js` as it is, plus `dist/<ID>/<folder>/styles.css` if there is one, into the testing tool's preview and check there too (`test.js` injects after load, so it hides flicker and early-run problems). Previews can serve an older save: reload and confirm you are on the latest. Do not paste `main.js`.
