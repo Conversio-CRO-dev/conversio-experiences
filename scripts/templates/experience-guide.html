@@ -4,45 +4,43 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{{ID}} guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700&amp;display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #f6f7f9;
+    /* Conversio brand colours, as used on conversio.com */
+    --navy: #03081f;
+    --navy-2: #050c2f;
+    --pink: #ff0b78;
+
+    /* Light theme. Tints are the brand colours over white: navy 8%, pink 10%. */
+    --bg: #f2f2f2;
     --surface: #ffffff;
-    --text: #1b2330;
-    --muted: #5b6676;
-    --border: #dde2ea;
-    --accent: #2557d6;
-    --accent-ink: #ffffff;
-    --accent-soft: #e8eefc;
-    --code-bg: #111827;
-    --code-head: #1f2937;
-    --code-text: #e5e7eb;
-    --prompt-head: #1e3a8a;
-    --warn-bg: #fff4e0;
-    --warn-border: #f0b44c;
-    --rule-bg: #fdecec;
-    --rule-border: #d64545;
-    --ok: #17803d;
+    --text: #03081f;
+    --muted: #565b73;
+    --border: #d9dbe3;
+    --link: #03081f;
+    --tint: #ebebed;
+    --note-bg: #ebebed;
+    --rule-bg: #ffe7f2;
+    --code-head: #050c2f;
+
+    --font-head: "Inter Tight", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   }
   @media (prefers-color-scheme: dark) {
     :root {
-      --bg: #0e1218;
-      --surface: #161c25;
-      --text: #e6eaf0;
-      --muted: #9aa5b5;
-      --border: #2a3342;
-      --accent: #7fa4ff;
-      --accent-ink: #0e1218;
-      --accent-soft: #1b2744;
-      --code-bg: #0a0e14;
-      --code-head: #1a212c;
-      --code-text: #e5e7eb;
-      --prompt-head: #243a73;
-      --warn-bg: #2b2210;
-      --warn-border: #a8741f;
-      --rule-bg: #2c1517;
-      --rule-border: #d96a6a;
-      --ok: #4cc27a;
+      /* Dark theme: navy surfaces. Tints are white 10% and pink 14% over navy 2. */
+      --bg: #03081f;
+      --surface: #050c2f;
+      --text: #ffffff;
+      --muted: #b3b5bc;
+      --border: #282e4c;
+      --link: #ff0b78;
+      --tint: #1e2444;
+      --note-bg: #1e2444;
+      --rule-bg: #280c39;
+      --code-head: #1e2444;
     }
   }
 
@@ -54,37 +52,46 @@
     color: var(--text);
     font: 16px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   }
-  .wrap { max-width: 780px; margin: 0 auto; padding: 32px 16px 80px; }
-  a { color: var(--accent); }
+  .wrap { max-width: 780px; margin: 0 auto; padding: 28px 16px 80px; }
+  a { color: var(--link); text-decoration-color: var(--pink); text-decoration-thickness: 2px; text-underline-offset: 3px; }
+  h1, h2, h3, .tab, .btn { font-family: var(--font-head); }
 
-  .eyebrow { margin: 0 0 6px; font-size: 13px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
-  h1 { margin: 0 0 10px; font-size: clamp(26px, 5vw, 34px); line-height: 1.15; overflow-wrap: anywhere; }
-  .lead { margin: 0 0 20px; color: var(--muted); font-size: 17px; }
+  /* Header band */
+  .hero { background: var(--navy); color: #ffffff; border-bottom: 4px solid var(--pink); }
+  .hero-in { max-width: 780px; margin: 0 auto; padding: 36px 16px 30px; }
+  .eyebrow {
+    display: flex; align-items: center; gap: 10px; margin: 0 0 12px;
+    font: 600 13px/1 var(--font-head); letter-spacing: .1em; text-transform: uppercase; color: #ffffff;
+  }
+  .eyebrow::before { content: ""; width: 28px; height: 4px; background: var(--pink); border-radius: 2px; }
+  h1 { margin: 0 0 12px; font-size: clamp(28px, 5.4vw, 40px); font-weight: 600; line-height: 1.12; overflow-wrap: anywhere; }
+  .lead { margin: 0; max-width: 62ch; color: rgba(255,255,255,.8); font-size: 17px; }
 
   .rule {
-    margin: 0 0 20px; padding: 14px 16px; border-radius: 12px;
-    background: var(--rule-bg); border: 1px solid var(--rule-border);
+    margin: 0 0 20px; padding: 14px 16px; border-radius: 8px;
+    background: var(--rule-bg); border: 1px solid var(--pink); border-left-width: 6px;
   }
   .rule strong { display: block; margin-bottom: 2px; }
 
+  /* Tabs */
   .tabs {
     position: sticky; top: 8px; z-index: 10;
     display: flex; gap: 4px; margin: 0 0 20px; padding: 4px;
-    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
   }
   .tab {
-    flex: 1; padding: 10px 12px; font: inherit; font-weight: 600; cursor: pointer;
-    color: var(--muted); background: transparent; border: 0; border-radius: 9px;
+    flex: 1; padding: 11px 12px 8px; font-size: 16px; font-weight: 600; cursor: pointer;
+    color: var(--muted); background: transparent; border: 0; border-bottom: 4px solid transparent; border-radius: 4px;
   }
-  .tab:hover { color: var(--text); }
-  .tab[aria-selected="true"] { color: var(--accent-ink); background: var(--accent); }
-  .tab:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .tab:hover { color: var(--text); background: var(--tint); }
+  .tab[aria-selected="true"] { color: var(--text); font-weight: 700; background: var(--tint); border-bottom-color: var(--pink); }
+  .tab:focus-visible { outline: 2px solid var(--pink); outline-offset: 2px; }
   [role="tabpanel"] { scroll-margin-top: 72px; }
   [role="tabpanel"][hidden] { display: none; }
 
   .facts {
     display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 1px;
-    margin: 0; background: var(--border); border: 1px solid var(--border); border-radius: 12px; overflow: hidden;
+    margin: 0; background: var(--border); border: 1px solid var(--border); border-radius: 8px; overflow: hidden;
   }
   .facts div { padding: 10px 14px; background: var(--surface); }
   .facts dt { font-size: 12px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); }
@@ -92,27 +99,27 @@
 
   .toc { margin: 20px 0 8px; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 8px; }
   .toc a {
-    display: inline-block; padding: 4px 10px; font-size: 13px; text-decoration: none;
-    color: var(--accent); background: var(--accent-soft); border-radius: 999px;
+    display: inline-block; padding: 4px 10px; font-size: 13px; font-weight: 600; text-decoration: none;
+    color: var(--text); background: var(--tint); border: 1px solid var(--border); border-radius: 999px;
   }
-  .toc a:hover { text-decoration: underline; }
+  .toc a:hover { border-color: var(--pink); }
 
   .part {
-    margin: 36px 0 12px; font-size: 13px; font-weight: 700; letter-spacing: .08em;
+    margin: 36px 0 12px; font: 700 13px/1.2 var(--font-head); letter-spacing: .1em;
     text-transform: uppercase; color: var(--muted);
   }
 
   .step {
     display: grid; grid-template-columns: 40px 1fr; gap: 14px;
     margin: 0 0 16px; padding: 18px 16px;
-    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
     scroll-margin-top: 72px;
   }
   .num {
     width: 36px; height: 36px; display: grid; place-items: center;
-    font-weight: 700; color: var(--accent-ink); background: var(--accent); border-radius: 50%;
+    font: 700 19px/1 var(--font-head); color: #ffffff; background: var(--pink); border-radius: 50%;
   }
-  .step h3 { margin: 4px 0 8px; font-size: 19px; line-height: 1.25; }
+  .step h3 { margin: 4px 0 8px; font-size: 20px; font-weight: 600; line-height: 1.25; }
   .step p { margin: 0 0 10px; }
   .step ul, .step ol { margin: 0 0 12px; padding-left: 20px; }
   .step li { margin: 3px 0; }
@@ -120,56 +127,64 @@
 
   code {
     padding: 1px 6px; font: 0.9em ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-    background: var(--accent-soft); border-radius: 5px; overflow-wrap: anywhere;
+    background: var(--tint); border-radius: 4px; overflow-wrap: anywhere;
   }
 
-  .code { margin: 10px 0 14px; border-radius: 10px; overflow: hidden; background: var(--code-bg); }
+  .code { margin: 10px 0 14px; border-radius: 8px; overflow: hidden; background: var(--navy); }
+  .code.prompt { border-top: 4px solid var(--pink); }
   .code-head {
     display: flex; align-items: center; justify-content: space-between; gap: 8px;
     min-height: 34px; padding: 6px 10px 6px 14px; background: var(--code-head);
-    font-size: 12px; font-weight: 600; letter-spacing: .04em; color: #cbd5e1;
+    font: 600 12px/1 var(--font-head); letter-spacing: .06em; color: #ffffff;
   }
-  .code.prompt .code-head { background: var(--prompt-head); color: #e0e7ff; }
   .copy {
-    padding: 4px 10px; font: inherit; font-size: 12px; font-weight: 600; cursor: pointer;
-    color: #e5e7eb; background: transparent; border: 1px solid #4b5563; border-radius: 6px;
+    padding: 5px 12px; font: 600 12px/1 var(--font-head); cursor: pointer;
+    color: #ffffff; background: transparent; border: 1px solid rgba(255,255,255,.45); border-radius: 4px;
   }
-  .copy:hover { background: rgba(255,255,255,.1); }
-  .copy:focus-visible { outline: 2px solid #93b4ff; outline-offset: 2px; }
-  .copy.done { color: #86efac; border-color: #86efac; }
+  .copy:hover { border-color: var(--pink); }
+  .copy:focus-visible { outline: 2px solid var(--pink); outline-offset: 2px; }
+  .copy.done { color: var(--pink); border-color: var(--pink); }
   .code pre {
     margin: 0; padding: 12px 14px; overflow-x: auto;
-    font: 13.5px/1.55 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; color: var(--code-text);
+    font: 13.5px/1.55 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; color: #f2f2f2;
   }
   .code.prompt pre { white-space: pre-wrap; overflow-wrap: anywhere; }
   .code code { padding: 0; background: none; font: inherit; }
 
   .note {
     margin: 10px 0 14px; padding: 10px 14px; font-size: 15px;
-    background: var(--warn-bg); border: 1px solid var(--warn-border); border-radius: 10px;
+    background: var(--note-bg); border: 1px solid var(--border); border-left: 6px solid var(--pink); border-radius: 8px;
   }
-  .good { color: var(--ok); font-weight: 600; }
+  .good { font-weight: 700; }
+
+  .btn {
+    display: inline-block; margin-top: 4px; padding: 10px 20px;
+    font-size: 19px; font-weight: 700; line-height: 1.2; text-decoration: none;
+    color: #ffffff; background: var(--pink); border-radius: 4px;
+  }
+  .btn:hover { filter: brightness(.92); }
+  .btn:focus-visible { outline: 2px solid var(--text); outline-offset: 3px; }
 
   details {
     margin: 0 0 16px; padding: 14px 16px;
-    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
   }
-  summary { cursor: pointer; font-weight: 600; }
+  summary { cursor: pointer; font: 600 16px/1.4 var(--font-head); }
   details[open] summary { margin-bottom: 8px; }
   details p { margin: 0 0 10px; }
 
-  table { width: 100%; border-collapse: collapse; font-size: 15px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+  table { width: 100%; border-collapse: collapse; font-size: 15px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
   th, td { padding: 10px 12px; text-align: left; vertical-align: top; border-bottom: 1px solid var(--border); }
-  th { font-size: 13px; color: var(--muted); background: var(--bg); }
+  th { font: 600 13px/1.2 var(--font-head); color: var(--muted); background: var(--tint); }
   tr:last-child td { border-bottom: 0; }
   .step table { margin: 4px 0 12px; }
 
-  footer { margin-top: 40px; color: var(--muted); font-size: 14px; }
+  footer { margin-top: 40px; padding-top: 16px; border-top: 1px solid var(--border); color: var(--muted); font-size: 14px; }
 
   @media (max-width: 520px) {
     .step { grid-template-columns: 1fr; }
-    .num { width: 32px; height: 32px; }
-    .tab { padding: 10px 6px; font-size: 14px; }
+    .num { width: 32px; height: 32px; font-size: 18px; }
+    .tab { padding: 10px 6px 7px; font-size: 14px; }
   }
 </style>
 <noscript>
@@ -180,13 +195,16 @@
 </noscript>
 </head>
 <body>
-<div class="wrap">
 
-  <header>
-    <p class="eyebrow">Conversio CRO · {{PREFIX}}</p>
-    <h1>{{ID}}: build it step by step</h1>
-    <p class="lead">This page was made for {{ID}} and is already filled in. The first tab builds this experience. The second tab sets up the repository and shows how to use it. Every command and prompt is ready to copy.</p>
+  <header class="hero">
+    <div class="hero-in">
+      <p class="eyebrow">Conversio CRO · {{PREFIX}}</p>
+      <h1>{{ID}}: build it step by step</h1>
+      <p class="lead">This page was made for {{ID}} and is already filled in. The first tab sets up the repository and shows how to use it. The second tab builds this experience. Every command and prompt is ready to copy.</p>
+    </div>
   </header>
+
+<div class="wrap">
 
   <div class="rule" role="note">
     <strong>The one rule: nothing is ever merged with main.</strong>
@@ -194,12 +212,171 @@
   </div>
 
   <div class="tabs" role="tablist" aria-label="Guide sections">
-    <button class="tab" role="tab" id="tab-build" aria-controls="build" aria-selected="true" type="button">Build {{ID}}</button>
-    <button class="tab" role="tab" id="tab-setup" aria-controls="setup" aria-selected="false" tabindex="-1" type="button">Set up the repository</button>
+    <button class="tab" role="tab" id="tab-setup" aria-controls="setup" aria-selected="true" type="button">Set up the repository</button>
+    <button class="tab" role="tab" id="tab-build" aria-controls="build" aria-selected="false" tabindex="-1" type="button">Build {{ID}}</button>
   </div>
 
-  <!-- ===== Tab 1: build this experience ===== -->
-  <div role="tabpanel" id="build" aria-labelledby="tab-build">
+  <!-- ===== Tab 1: set up the repository and how to use it ===== -->
+  <div role="tabpanel" id="setup" aria-labelledby="tab-setup">
+
+    <ul class="toc" aria-label="Setup steps">
+      <li><a href="#t1">1 Needs</a></li>
+      <li><a href="#t2">2 Repository</a></li>
+      <li><a href="#t3">3 Claude Code</a></li>
+      <li><a href="#t4">4 Asana and Figma</a></li>
+      <li><a href="#t5">5 How to use it</a></li>
+      <li><a href="#t6">6 Next experience</a></li>
+      <li><a href="#setup-help">Help</a></li>
+    </ul>
+
+    <h2 class="part">Once per person</h2>
+
+    <section class="step" id="t1">
+      <div class="num">1</div>
+      <div>
+        <h3>What you need</h3>
+        <ul>
+          <li>Git, and access to the <strong>Conversio-CRO-dev</strong> organisation on GitHub with an SSH key set up. The clone below uses SSH.</li>
+          <li>Node.js 18 or newer (it comes with npm).</li>
+          <li>Claude Code: the terminal app, or the Claude desktop app (Code tab).</li>
+          <li>Access to Asana (for the ticket) and Figma (for the design).</li>
+          <li>Optional: a Mac with Xcode, for the iOS Simulator, to check phone-only problems.</li>
+        </ul>
+        <p>Check what you have. Node should say <code>v18</code> or higher:</p>
+        <div class="code">
+          <div class="code-head"><span>TERMINAL</span><button class="copy" type="button">Copy</button></div>
+<pre><code>git --version
+node --version
+npm --version</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <section class="step" id="t2">
+      <div class="num">2</div>
+      <div>
+        <h3>Get the right repository</h3>
+        <p>Build every new experience in <strong>conversio-experiences</strong>:</p>
+        <div class="code">
+          <div class="code-head"><span>TERMINAL (ONCE)</span><button class="copy" type="button">Copy</button></div>
+<pre><code>git clone git@github.com:Conversio-CRO-dev/conversio-experiences.git
+cd conversio-experiences
+npm install</code></pre>
+        </div>
+        <p><code>npm install</code> installs everything the build and the test runner need, including the browser the test runner opens. It can take a minute. You only run it once.</p>
+        <p><strong>Check you have the right one:</strong></p>
+        <div class="code">
+          <div class="code-head"><span>TERMINAL</span><button class="copy" type="button">Copy</button></div>
+<pre><code>git remote -v
+ls</code></pre>
+        </div>
+        <p>The remote ends in <code>conversio-experiences.git</code>, and you see <code>experiences</code>, <code>scripts</code>, <code>clients.json</code> and <code>CLAUDE.md</code>.</p>
+        <div class="note">If you see <code>src/variation1.js</code> and <code>dummyControl.js</code> instead, you are in the older flat starter (<code>AC-Dev-Code</code>), not this repository. New experiences are built in <code>conversio-experiences</code>.</div>
+      </div>
+    </section>
+
+    <section class="step" id="t3">
+      <div class="num">3</div>
+      <div>
+        <h3>Open Claude Code in it</h3>
+        <p>Open Claude Code inside the repository folder: run <code>claude</code> in the terminal, or open the folder in the Claude desktop app (Code tab).</p>
+        <p>Claude reads <code>CLAUDE.md</code> in the repo root by itself (the naming, the tracking rules and the one rule), and finds the <code>build-experience</code> skill in <code>.claude/skills/</code>. You do not install either: they come with the repository, on any branch started from <code>main</code>.</p>
+      </div>
+    </section>
+
+    <section class="step" id="t4">
+      <div class="num">4</div>
+      <div>
+        <h3>Connect Asana and Figma</h3>
+        <p>Claude reads the ticket and the design through two connectors. Each person connects their own: authorise Asana and Figma in your Claude connector settings (or with <code>/mcp</code> in a terminal Claude Code), and sign in when asked. You also need access to the ticket in Asana and to the file in Figma.</p>
+        <p>Check both work before you build anything:</p>
+        <div class="code prompt">
+          <div class="code-head"><span>SAY TO CLAUDE</span><button class="copy" type="button">Copy</button></div>
+<pre><code>Check you can reach Asana and Figma for {{ID}}.
+
+{{ASANA_LINE}}
+{{FIGMA_LINE}}
+
+Using the Asana tools, read the ticket and tell me its title and the list of events. Then call get_design_context and get_variable_defs on the first Figma frame and tell me the frame name and three of its colours.</code></pre>
+        </div>
+        <div class="note"><strong>Stop here if either one says the tools are not available.</strong> Fix the connection first. Without the exact Figma values Claude would work from a screenshot, and the build would not be accurate.</div>
+      </div>
+    </section>
+
+    <h2 class="part">Using the repository</h2>
+
+    <section class="step" id="t5">
+      <div class="num">5</div>
+      <div>
+        <h3>How you use it</h3>
+        <p>The commands you will use, in the order you use them (shown for {{ID}}):</p>
+        <table>
+          <thead><tr><th>Command</th><th>What it does</th></tr></thead>
+          <tbody>
+            <tr><td><code>git fetch &amp;&amp; git checkout --no-track -b {{ID}} origin/main</code></td><td>Starts the experience's own branch from <code>main</code>.</td></tr>
+            <tr><td><code>npm run scaffold -- {{ID}}</code></td><td>Creates the folders and this guide.</td></tr>
+            <tr><td><code>node test.js {{ID}} variation-1</code></td><td>Opens the client's site with your code injected, reloads on save.</td></tr>
+            <tr><td><code>npm run build:experience -- {{ID}}</code></td><td>Compiles the CSS to paste and checks the source.</td></tr>
+            <tr><td><code>git push origin {{ID}}</code></td><td>Pushes the branch. Then stop: it is never merged.</td></tr>
+            <tr><td><code>npm run guide -- {{ID}}</code></td><td>Rewrites this guide, for example to add the ticket links.</td></tr>
+          </tbody>
+        </table>
+        <p>Where things are:</p>
+        <div class="code">
+          <div class="code-head"><span>THE REPOSITORY</span></div>
+<pre><code>experiences/{{ID}}/
+├── variation-1/src/index.js, styles.scss   the variation (plain JavaScript, no imports)
+├── variation-2/...                          only if the ticket has two variations
+├── control/src/index.js                     tracking only, no page changes
+├── guide.html                               this page
+└── package.json
+clients.json                                 client prefix to site (FN, LT, WN, BM, ...)
+scripts/                                     scaffold, build and guide
+CLAUDE.md                                    the rules Claude follows
+.claude/skills/build-experience/             the skill Claude builds with</code></pre>
+        </div>
+        <p>Rules to remember:</p>
+        <ul>
+          <li>Nothing is ever merged with <code>main</code>, and no pull requests.</li>
+          <li>Plain JavaScript only, no imports, and no <code>${...}</code> in the file.</li>
+          <li>Guard the script so a second run does nothing, and remove every <code>console</code> line before it goes out for testing.</li>
+          <li>Only real user clicks fire an event: check <code>event.isTrusted</code> if the experience clicks a button itself.</li>
+        </ul>
+        <p class="muted">A branch keeps the tooling it started with. New branches start from <code>main</code>, so they get the latest.</p>
+      </div>
+    </section>
+
+    <section class="step" id="t6">
+      <div class="num">6</div>
+      <div>
+        <h3>Start your next experience</h3>
+        <p>Replace <code>&lt;ID&gt;</code> with the new test ID (the client's prefix must be in <code>clients.json</code>). The two links are optional, and fill in the new guide's prompts:</p>
+        <div class="code">
+          <div class="code-head"><span>TERMINAL</span><button class="copy" type="button">Copy</button></div>
+<pre><code>git fetch &amp;&amp; git checkout --no-track -b &lt;ID&gt; origin/main
+npm run scaffold -- &lt;ID&gt; --asana="&lt;ticket link&gt;" --figma="&lt;frame link&gt;"</code></pre>
+        </div>
+        <p>Then open <code>experiences/&lt;ID&gt;/guide.html</code> in a browser. It is already filled in for that experience, and the Build tab takes you from there.</p>
+      </div>
+    </section>
+
+    <h2 class="part" id="setup-help">If setup goes wrong</h2>
+    <table>
+      <thead><tr><th>What you see</th><th>What to do</th></tr></thead>
+      <tbody>
+        <tr><td><code>Permission denied (publickey)</code> when cloning</td><td>Your SSH key is not on your GitHub account, or you are not in the Conversio-CRO-dev organisation. Add the key in your GitHub settings and ask to be added.</td></tr>
+        <tr><td><code>npm install</code> fails or complains about the version</td><td>Run <code>node --version</code>. It needs to be 18 or higher.</td></tr>
+        <tr><td>Chrome will not open when you test</td><td>Run <code>npm install</code> again.</td></tr>
+        <tr><td><code>claude: command not found</code></td><td>Claude Code is not installed. Install it, or open the folder in the Claude desktop app (Code tab).</td></tr>
+        <tr><td>Claude does not know the build-experience skill</td><td>Check you are in the repository folder and that <code>ls .claude/skills</code> shows it. A branch started before the skill existed will not have it: start from <code>origin/main</code>.</td></tr>
+      </tbody>
+    </table>
+
+    <p style="margin-top:24px"><a class="btn" href="#build">Setup done? Build {{ID}}</a></p>
+  </div>
+
+  <!-- ===== Tab 2: build this experience ===== -->
+  <div role="tabpanel" id="build" aria-labelledby="tab-build" hidden>
 
     <dl class="facts">
       <div><dt>Test ID</dt><dd>{{ID}}</dd></div>
@@ -391,163 +568,6 @@ npm run scaffold -- {{ID}}</code></pre>
     </table>
   </div>
 
-  <!-- ===== Tab 2: set up the repository and how to use it ===== -->
-  <div role="tabpanel" id="setup" aria-labelledby="tab-setup" hidden>
-
-    <ul class="toc" aria-label="Setup steps">
-      <li><a href="#t1">1 Needs</a></li>
-      <li><a href="#t2">2 Repository</a></li>
-      <li><a href="#t3">3 Claude Code</a></li>
-      <li><a href="#t4">4 Asana and Figma</a></li>
-      <li><a href="#t5">5 How to use it</a></li>
-      <li><a href="#t6">6 Next experience</a></li>
-      <li><a href="#setup-help">Help</a></li>
-    </ul>
-
-    <h2 class="part">Once per person</h2>
-
-    <section class="step" id="t1">
-      <div class="num">1</div>
-      <div>
-        <h3>What you need</h3>
-        <ul>
-          <li>Git, and access to the <strong>Conversio-CRO-dev</strong> organisation on GitHub with an SSH key set up. The clone below uses SSH.</li>
-          <li>Node.js 18 or newer (it comes with npm).</li>
-          <li>Claude Code: the terminal app, or the Claude desktop app (Code tab).</li>
-          <li>Access to Asana (for the ticket) and Figma (for the design).</li>
-          <li>Optional: a Mac with Xcode, for the iOS Simulator, to check phone-only problems.</li>
-        </ul>
-        <p>Check what you have. Node should say <code>v18</code> or higher:</p>
-        <div class="code">
-          <div class="code-head"><span>TERMINAL</span><button class="copy" type="button">Copy</button></div>
-<pre><code>git --version
-node --version
-npm --version</code></pre>
-        </div>
-      </div>
-    </section>
-
-    <section class="step" id="t2">
-      <div class="num">2</div>
-      <div>
-        <h3>Get the right repository</h3>
-        <p>Build every new experience in <strong>conversio-experiences</strong>:</p>
-        <div class="code">
-          <div class="code-head"><span>TERMINAL (ONCE)</span><button class="copy" type="button">Copy</button></div>
-<pre><code>git clone git@github.com:Conversio-CRO-dev/conversio-experiences.git
-cd conversio-experiences
-npm install</code></pre>
-        </div>
-        <p><code>npm install</code> installs everything the build and the test runner need, including the browser the test runner opens. It can take a minute. You only run it once.</p>
-        <p><strong>Check you have the right one:</strong></p>
-        <div class="code">
-          <div class="code-head"><span>TERMINAL</span><button class="copy" type="button">Copy</button></div>
-<pre><code>git remote -v
-ls</code></pre>
-        </div>
-        <p>The remote ends in <code>conversio-experiences.git</code>, and you see <code>experiences</code>, <code>scripts</code>, <code>clients.json</code> and <code>CLAUDE.md</code>.</p>
-        <div class="note">If you see <code>src/variation1.js</code> and <code>dummyControl.js</code> instead, you are in the older flat starter (<code>AC-Dev-Code</code>), not this repository. New experiences are built in <code>conversio-experiences</code>.</div>
-      </div>
-    </section>
-
-    <section class="step" id="t3">
-      <div class="num">3</div>
-      <div>
-        <h3>Open Claude Code in it</h3>
-        <p>Open Claude Code inside the repository folder: run <code>claude</code> in the terminal, or open the folder in the Claude desktop app (Code tab).</p>
-        <p>Claude reads <code>CLAUDE.md</code> in the repo root by itself (the naming, the tracking rules and the one rule), and finds the <code>build-experience</code> skill in <code>.claude/skills/</code>. You do not install either: they come with the repository, on any branch started from <code>main</code>.</p>
-      </div>
-    </section>
-
-    <section class="step" id="t4">
-      <div class="num">4</div>
-      <div>
-        <h3>Connect Asana and Figma</h3>
-        <p>Claude reads the ticket and the design through two connectors. Each person connects their own: authorise Asana and Figma in your Claude connector settings (or with <code>/mcp</code> in a terminal Claude Code), and sign in when asked. You also need access to the ticket in Asana and to the file in Figma.</p>
-        <p>Check both work before you build anything:</p>
-        <div class="code prompt">
-          <div class="code-head"><span>SAY TO CLAUDE</span><button class="copy" type="button">Copy</button></div>
-<pre><code>Check you can reach Asana and Figma for {{ID}}.
-
-{{ASANA_LINE}}
-{{FIGMA_LINE}}
-
-Using the Asana tools, read the ticket and tell me its title and the list of events. Then call get_design_context and get_variable_defs on the first Figma frame and tell me the frame name and three of its colours.</code></pre>
-        </div>
-        <div class="note"><strong>Stop here if either one says the tools are not available.</strong> Fix the connection first. Without the exact Figma values Claude would work from a screenshot, and the build would not be accurate.</div>
-      </div>
-    </section>
-
-    <h2 class="part">Using the repository</h2>
-
-    <section class="step" id="t5">
-      <div class="num">5</div>
-      <div>
-        <h3>How you use it</h3>
-        <p>The commands you will use, in the order you use them (shown for {{ID}}):</p>
-        <table>
-          <thead><tr><th>Command</th><th>What it does</th></tr></thead>
-          <tbody>
-            <tr><td><code>git fetch &amp;&amp; git checkout --no-track -b {{ID}} origin/main</code></td><td>Starts the experience's own branch from <code>main</code>.</td></tr>
-            <tr><td><code>npm run scaffold -- {{ID}}</code></td><td>Creates the folders and this guide.</td></tr>
-            <tr><td><code>node test.js {{ID}} variation-1</code></td><td>Opens the client's site with your code injected, reloads on save.</td></tr>
-            <tr><td><code>npm run build:experience -- {{ID}}</code></td><td>Compiles the CSS to paste and checks the source.</td></tr>
-            <tr><td><code>git push origin {{ID}}</code></td><td>Pushes the branch. Then stop: it is never merged.</td></tr>
-            <tr><td><code>npm run guide -- {{ID}}</code></td><td>Rewrites this guide, for example to add the ticket links.</td></tr>
-          </tbody>
-        </table>
-        <p>Where things are:</p>
-        <div class="code">
-          <div class="code-head"><span>THE REPOSITORY</span></div>
-<pre><code>experiences/{{ID}}/
-├── variation-1/src/index.js, styles.scss   the variation (plain JavaScript, no imports)
-├── variation-2/...                          only if the ticket has two variations
-├── control/src/index.js                     tracking only, no page changes
-├── guide.html                               this page
-└── package.json
-clients.json                                 client prefix to site (FN, LT, WN, BM, ...)
-scripts/                                     scaffold, build and guide
-CLAUDE.md                                    the rules Claude follows
-.claude/skills/build-experience/             the skill Claude builds with</code></pre>
-        </div>
-        <p>Rules to remember:</p>
-        <ul>
-          <li>Nothing is ever merged with <code>main</code>, and no pull requests.</li>
-          <li>Plain JavaScript only, no imports, and no <code>${...}</code> in the file.</li>
-          <li>Guard the script so a second run does nothing, and remove every <code>console</code> line before it goes out for testing.</li>
-          <li>Only real user clicks fire an event: check <code>event.isTrusted</code> if the experience clicks a button itself.</li>
-        </ul>
-        <p class="muted">A branch keeps the tooling it started with. New branches start from <code>main</code>, so they get the latest.</p>
-      </div>
-    </section>
-
-    <section class="step" id="t6">
-      <div class="num">6</div>
-      <div>
-        <h3>Start your next experience</h3>
-        <p>Replace <code>&lt;ID&gt;</code> with the new test ID (the client's prefix must be in <code>clients.json</code>). The two links are optional, and fill in the new guide's prompts:</p>
-        <div class="code">
-          <div class="code-head"><span>TERMINAL</span><button class="copy" type="button">Copy</button></div>
-<pre><code>git fetch &amp;&amp; git checkout --no-track -b &lt;ID&gt; origin/main
-npm run scaffold -- &lt;ID&gt; --asana="&lt;ticket link&gt;" --figma="&lt;frame link&gt;"</code></pre>
-        </div>
-        <p>Then open <code>experiences/&lt;ID&gt;/guide.html</code> in a browser. It is already filled in for that experience, and the Build tab takes you from there.</p>
-      </div>
-    </section>
-
-    <h2 class="part" id="setup-help">If setup goes wrong</h2>
-    <table>
-      <thead><tr><th>What you see</th><th>What to do</th></tr></thead>
-      <tbody>
-        <tr><td><code>Permission denied (publickey)</code> when cloning</td><td>Your SSH key is not on your GitHub account, or you are not in the Conversio-CRO-dev organisation. Add the key in your GitHub settings and ask to be added.</td></tr>
-        <tr><td><code>npm install</code> fails or complains about the version</td><td>Run <code>node --version</code>. It needs to be 18 or higher.</td></tr>
-        <tr><td>Chrome will not open when you test</td><td>Run <code>npm install</code> again.</td></tr>
-        <tr><td><code>claude: command not found</code></td><td>Claude Code is not installed. Install it, or open the folder in the Claude desktop app (Code tab).</td></tr>
-        <tr><td>Claude does not know the build-experience skill</td><td>Check you are in the repository folder and that <code>ls .claude/skills</code> shows it. A branch started before the skill existed will not have it: start from <code>origin/main</code>.</td></tr>
-      </tbody>
-    </table>
-  </div>
-
   <footer>
     The repo is the source of truth: <code>CLAUDE.md</code>, <code>CONTRIBUTING.md</code> and <code>.claude/skills/build-experience/SKILL.md</code>. If this page and those disagree, the repo wins.
   </footer>
@@ -584,7 +604,7 @@ npm run scaffold -- &lt;ID&gt; --asana="&lt;ticket link&gt;" --figma="&lt;frame 
     });
   });
 
-  // A link such as #setup or #t4 opens the tab that holds it, then scrolls to it.
+  // A link such as #build or #s4 opens the tab that holds it, then scrolls to it.
   function openFromHash() {
     var id = decodeURIComponent(location.hash.slice(1));
     var target = id ? document.getElementById(id) : null;
