@@ -10,7 +10,7 @@ npm install
 
 ## Build one
 
-1. **Branch.** Name it after the test ID, e.g. `FN092`. Push it with `git push origin FN092`. No pull request needed.
+1. **Branch.** Name it after the test ID, e.g. `FN092`, and start it from `main`: `git fetch && git checkout --no-track -b FN092 origin/main`. Push it with `git push origin FN092` and leave it there. It is never merged with `main` and gets no pull request.
 2. **Scaffold.** `npm run scaffold -- FN092`. The client comes from the code's prefix (see `clients.json`; add the prefix first if it is missing). It creates `variation-1`, `variation-2` and `control`: delete the folders the ticket does not need.
 3. **Test while you build.** `node test.js FN092 variation-1` opens the client's site in Chrome, injects your code and CSS, and reloads when you save. The page's console prints in your terminal. For the control: `node test.js FN092 control`.
 4. **Write the code.**
@@ -27,6 +27,7 @@ npm install
 
 ## Rules
 
+- **Nothing is ever merged into `main`.** Each experience stays on its own branch: no merges, no pull requests. `main` holds only the shared tooling and docs.
 - Never write `${...}` in the file. Dynamic Yield and Adobe Target do not support it, and the file is pasted as written. Build strings with `+`. (`test.js` and the build warn about it.)
 - Guard the script so a second run does nothing: `if (!window.__fn092Initialized) { ... }`.
 - If your code clicks a button itself, check `event.isTrusted` in the tracking listener so only real clicks count.

@@ -13,7 +13,9 @@ Use the Asana tools (`get_task`, `get_task_stories`, `get_attachments`). Pull ou
 
 ## 2. Branch and scaffold
 
-`git checkout main && git pull && git checkout -b <ID>`. Check the prefix is in `clients.json`. If it is missing, ask before adding it.
+`git fetch && git checkout --no-track -b <ID> origin/main`. Check the prefix is in `clients.json`. If it is missing, ask before adding it.
+
+The branch is never merged with `main` and never gets a pull request. Do not merge, rebase or open a pull request for it, and do not offer to. When the experience is done, it stays a branch.
 
 `npm run scaffold -- <ID>` creates `variation-1`, `variation-2` and `control`, each with a one-line starter. Delete the folders the ticket does not need.
 

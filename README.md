@@ -35,6 +35,7 @@ Older experiences keep `src/` at the top of their folder (no variation folders).
 
 ## Notes
 
+- **Nothing is ever merged into `main`.** Each experience is its own branch, started from `main` and left as a branch: no merges, no pull requests. `main` holds only the shared tooling and docs.
 - Experiences are plain JavaScript with no imports. `test.js` refuses a file that has them.
 - What you paste into the testing tool: the folder's `src/index.js` exactly as it is, and `dist/<CODE>/<folder>/styles.css` if the folder has styles (`npm run build:experience` writes it). Nothing is bundled or changed for you.
 - `test.js` is the quick loop while building, and it injects what you paste. `npm run tester -- test <CODE> <variation>` is an optional extra check on a webpack bundle, which is not pasted.

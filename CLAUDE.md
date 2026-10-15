@@ -2,6 +2,8 @@
 
 A shared repo for building experiences that are delivered through the client's testing tool: Dynamic Yield, Adobe Target or AB Tasty. One folder per experience, one branch per ticket. To build one from a Figma frame and an Asana ticket, use the `build-experience` skill. `README.md` and `CONTRIBUTING.md` are the human versions of the commands below.
 
+**The one rule: branches are never merged with `main`.** Each experience is its own branch with its own code, and it stays a branch. Nothing is merged into `main`, and no pull request is opened. `main` holds only the shared tooling and docs. Never merge, rebase or open a pull request for a ticket branch, and do not offer to.
+
 ## Files
 
 | Path | What it is |
@@ -21,7 +23,7 @@ Older experiences keep `src/` at the top of their folder (no variation folders).
 ## Naming
 
 - Test ID, ticket ID and folder name are the same: client prefix plus number, e.g. `FN092`. A follow-up takes a suffix (`LT155.1`).
-- Name the branch after the test ID and push it (`git push origin FN092`). No pull request needed. The branch name does not decide the client.
+- Name the branch after the test ID and start it from `main` without tracking it: `git fetch && git checkout --no-track -b FN092 origin/main`. Push it (`git push origin FN092`) and leave it there. The branch name does not decide the client.
 - Guard each script: `if (!window.__<id>Initialized) { window.__<id>Initialized = true; ... }` (lowercase id). The testing tool can run a script more than once.
 - Style element ids and the classes you add start with the lowercase test ID, e.g. `fn092-styles`.
 - Event label: `<ID> | (Variation 1) | <Event name>`. Second variation: `(Variation 2)`. Control: `(Control Original)`.
