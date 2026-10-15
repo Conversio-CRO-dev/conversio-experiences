@@ -13,7 +13,7 @@ A shared repo for building experiences that are delivered through the client's t
 | `experiences/<ID>/control/src/index.js` | The control. Tracking only, same events, no page changes. |
 | `experiences/<ID>/<folder>/src/styles.scss` | CSS for that folder, if it has any. `test.js` compiles and injects it; the build writes the compiled `dist/<ID>/<folder>/styles.css`. |
 | `experiences/<ID>/package.json`, `<folder>/webpack.config.js` | Made by the scaffold. Leave them. |
-| `experiences/<ID>/guide.html` | Step-by-step page for that experience, already filled in with its ID, client site and links. Made by the scaffold, for people to open in a browser. |
+| `experiences/<ID>/guide.html` | Step-by-step page for that experience, already filled in with its ID, client site and links. Two tabs: build the experience, and set up the repository and how to use it. Made by the scaffold, for people to open in a browser. |
 | `clients.json` | Prefix to client site URL. The only client list. |
 | `scripts/scaffold.js`, `scripts/build.js`, `scripts/guide.js`, `scripts/lib/`, `scripts/templates/` | Scaffold, build, the guide page (`templates/experience-guide.html` is its source), and the shared lookup of experiences and sites. |
 | `packages/tester` | `npm run tester -- test <ID> <folder>`: bundles the folder with webpack, then injects the bundle. An extra check. The bundle is not what gets pasted. |
