@@ -211,7 +211,7 @@
     <div class="hero-in">
       <p class="eyebrow">Conversio CRO · {{PREFIX}}</p>
       <h1>{{ID}}: build it step by step</h1>
-      <p class="lead">This page was made for {{ID}} and is already filled in. The first tab sets up the repository and shows how to use it. The second tab builds this experience. Every command and prompt is ready to copy.</p>
+      <p class="lead">This page was made for {{ID}} and is already filled in. The first tab sets up the repository, shows how to create a branch for a new experience, and shows how to use it. The second tab builds this experience. Every command and prompt is ready to copy.</p>
     </div>
   </header>
 
@@ -230,13 +230,15 @@
   <!-- ===== Tab 1: set up the repository and how to use it ===== -->
   <div role="tabpanel" id="setup" aria-labelledby="tab-setup">
 
+    <div class="note">Starting a new experience? <button class="link" type="button" data-goto="t5">Go to step 5, create a branch</button>. Steps 1 to 4 are one-off setup.</div>
+
     <ul class="toc" aria-label="Setup steps">
       <li><button type="button" class="pill" data-goto="t1">1 Needs</button></li>
       <li><button type="button" class="pill" data-goto="t2">2 Repository</button></li>
       <li><button type="button" class="pill" data-goto="t3">3 Claude Code</button></li>
       <li><button type="button" class="pill" data-goto="t4">4 Asana and Figma</button></li>
-      <li><button type="button" class="pill" data-goto="t5">5 How to use it</button></li>
-      <li><button type="button" class="pill" data-goto="t6">6 Next experience</button></li>
+      <li><button type="button" class="pill" data-goto="t5">5 New branch</button></li>
+      <li><button type="button" class="pill" data-goto="t6">6 How to use it</button></li>
       <li><button type="button" class="pill" data-goto="setup-help">Help</button></li>
     </ul>
 
@@ -319,6 +321,40 @@ Using the Asana tools, read the ticket and tell me its title and the list of eve
     <section class="step" id="t5">
       <div class="num">5</div>
       <div>
+        <h3>Create a branch for a new experience</h3>
+        <p>Every experience is its own branch, named after the test ID on the Asana ticket, for example <code>FN092</code>. A follow-up to a test takes a suffix, such as <code>LT155.1</code>. Always start the branch from <code>main</code>. In the commands below, replace <code>&lt;ID&gt;</code> with your test ID.</p>
+
+        <p><strong>A. Check the client is listed.</strong> The client is the letters at the start of the test ID (the <code>FN</code> in <code>FN092</code>).</p>
+        <div class="code">
+          <div class="code-head"><span>TERMINAL</span><button class="copy" type="button">Copy</button></div>
+<pre><code>git fetch &amp;&amp; git show origin/main:clients.json</code></pre>
+        </div>
+        <p>Your client's prefix should be in the list with a site next to it. A blank site counts as missing. If it is not there, ask whoever maintains <code>main</code> to add it, and wait for that before you go on. The branch has to start after the client is added.</p>
+
+        <p><strong>B. Make the branch.</strong></p>
+        <div class="code">
+          <div class="code-head"><span>TERMINAL</span><button class="copy" type="button">Copy</button></div>
+<pre><code>git checkout --no-track -b &lt;ID&gt; origin/main
+git branch --show-current</code></pre>
+        </div>
+        <p>The second command should print your test ID. <code>--no-track</code> stops the branch following <code>main</code>, so a stray <code>git pull</code> can never bring <code>main</code> into it.</p>
+
+        <p><strong>C. Create the folders.</strong></p>
+        <div class="code">
+          <div class="code-head"><span>TERMINAL</span><button class="copy" type="button">Copy</button></div>
+<pre><code>npm run scaffold -- &lt;ID&gt; --asana="&lt;ticket link&gt;" --figma="&lt;frame link&gt;"</code></pre>
+        </div>
+        <p>The two links are optional. They go into the new guide's prompts, so Claude does not have to search for the ticket. Without them it finds the ticket by the test ID.</p>
+        <p>This creates <code>experiences/&lt;ID&gt;/</code> with <code>variation-1</code>, <code>variation-2</code> and <code>control</code>, each with a one-line starter. Delete the folders the ticket does not need. It also writes a new <code>guide.html</code>, already filled in for that experience.</p>
+
+        <p><strong>D. Open the new guide.</strong> Open <code>experiences/&lt;ID&gt;/guide.html</code> in a browser. Its Build tab takes you from here: ticket, Figma, build, events, paste.</p>
+        <p class="muted">When you are done, push the branch with <code>git push origin &lt;ID&gt;</code> and stop. It is never merged and gets no pull request.</p>
+      </div>
+    </section>
+
+    <section class="step" id="t6">
+      <div class="num">6</div>
+      <div>
         <h3>How you use it</h3>
         <p>The commands you will use, in the order you use them (shown for {{ID}}):</p>
         <table>
@@ -354,20 +390,6 @@ CLAUDE.md                                    the rules Claude follows
           <li>Only real user clicks fire an event: check <code>event.isTrusted</code> if the experience clicks a button itself.</li>
         </ul>
         <p class="muted">A branch keeps the tooling it started with. New branches start from <code>main</code>, so they get the latest.</p>
-      </div>
-    </section>
-
-    <section class="step" id="t6">
-      <div class="num">6</div>
-      <div>
-        <h3>Start your next experience</h3>
-        <p>Replace <code>&lt;ID&gt;</code> with the new test ID (the client's prefix must be in <code>clients.json</code>). The two links are optional, and fill in the new guide's prompts:</p>
-        <div class="code">
-          <div class="code-head"><span>TERMINAL</span><button class="copy" type="button">Copy</button></div>
-<pre><code>git fetch &amp;&amp; git checkout --no-track -b &lt;ID&gt; origin/main
-npm run scaffold -- &lt;ID&gt; --asana="&lt;ticket link&gt;" --figma="&lt;frame link&gt;"</code></pre>
-        </div>
-        <p>Then open <code>experiences/&lt;ID&gt;/guide.html</code> in a browser. It is already filled in for that experience, and the Build tab takes you from there.</p>
       </div>
     </section>
 
@@ -562,7 +584,7 @@ Replace the console.log in logEvent with exactly this, in the variation and in t
 <pre><code>git fetch &amp;&amp; git checkout --no-track -b {{ID}} origin/main
 npm run scaffold -- {{ID}}</code></pre>
       </div>
-      <p class="muted">The scaffold made <code>variation-1</code>, <code>variation-2</code> and <code>control</code>, each with a one-line starter, plus this page. Delete the folders the ticket does not need, for example <code>rm -r experiences/{{ID}}/variation-2</code>.</p>
+      <p class="muted">The scaffold made <code>variation-1</code>, <code>variation-2</code> and <code>control</code>, each with a one-line starter, plus this page. Delete the folders the ticket does not need, for example <code>rm -r experiences/{{ID}}/variation-2</code>. To start a different experience, see step 5 of the <button class="link" type="button" data-goto="t5">Set up tab</button>.</p>
     </details>
 
     <h2 class="part" id="help">If something goes wrong</h2>
