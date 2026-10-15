@@ -8,7 +8,7 @@ Step by step: [CONTRIBUTING.md](CONTRIBUTING.md). Conventions, tracking and gotc
 
 ```bash
 npm install
-npm run scaffold -- FN092                  # creates experiences/FN092: variation-1, variation-2, control
+npm run scaffold -- FN092                  # creates experiences/FN092: variation-1, variation-2, control, guide.html
 node test.js FN092 variation-1             # opens the client's site, injects your code, reloads on save
 node test.js FN092 control                 # the control, tracking only
 npm run build:experience -- FN092          # writes dist/FN092/<folder>/styles.css, the CSS you paste
@@ -21,6 +21,7 @@ experiences/FN092/
 ├── variation-1/src/index.js, styles.scss     # plain JavaScript (no imports) and optional SCSS
 ├── variation-2/...                            # only if the ticket has two variations
 ├── control/src/index.js                       # tracking only, no page changes
+├── guide.html                                 # step-by-step page for this experience, open it in a browser
 └── package.json                               # { "client": "FN" } plus the test and build scripts
 clients.json                                   # prefix to site URL: FN, LT, WN, BM, ...
 scripts/                                       # scaffold and build

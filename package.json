@@ -10,6 +10,7 @@
   "scripts": {
     "build": "npm run build --workspace=packages/helpers",
     "scaffold": "node scripts/scaffold.js",
+    "guide": "node scripts/guide.js",
     "build:experience": "node scripts/build.js",
     "tester": "node packages/tester/bin/tester",
     "postinstall": "npm run build"

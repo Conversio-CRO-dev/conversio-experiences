@@ -1,15 +1,22 @@
 const fs = require('fs');
 const path = require('path');
 const { clients, experienceDir, prefixOf } = require('./lib/experience.js');
+const { writeGuide } = require('./lib/guide.js');
 
 const args = process.argv.slice(2);
 const experienceCode = args.find(a => !a.startsWith('--'));
 const clientMatch = args.find(a => a.startsWith('--client='));
 
+// The value of --name=value. Links have "=" in them, so keep everything after the first one.
+function option(name) {
+  const match = args.find(a => a.startsWith(`--${name}=`));
+  return match ? match.slice(name.length + 3).trim() : '';
+}
+
 if (!experienceCode || !/^[A-Za-z][A-Za-z0-9._-]*$/.test(experienceCode)) {
   console.log(`
 Usage:
-  npm run scaffold -- <CODE> [--client=<PREFIX>]
+  npm run scaffold -- <CODE> [--client=<PREFIX>] [--asana="<ticket link>"] [--figma="<frame link>"]
 
 Example:
   npm run scaffold -- FN092
@@ -17,6 +24,9 @@ Example:
 The client comes from the leading letters of the code (FN092 is FN). Pass --client=<PREFIX> if the
 code does not start with the client's prefix. Prefixes are in clients.json:
   ${Object.keys(clients).join(', ')}
+
+The Asana and Figma links are optional. They go into guide.html, the step-by-step page the scaffold
+makes for the experience.
   `);
   process.exit(1);
 }
@@ -99,7 +109,8 @@ Experience for: **${client}** (${clients[client]})
 ${experienceCode}/
 ├── variation-1/src/index.js, styles.scss
 ├── variation-2/src/index.js, styles.scss   (delete if the ticket has one variation)
-└── control/src/index.js                    (tracking only, no page changes)
+├── control/src/index.js                    (tracking only, no page changes)
+└── guide.html                              (step-by-step page for this experience, open it in a browser)
 \`\`\`
 
 ## Develop
@@ -126,6 +137,20 @@ See CLAUDE.md in the repo root: naming, tracking, what a finished experience loo
 
 fs.writeFileSync(path.join(experiencePath, 'README.md'), readme);
 
+// The step-by-step page for this experience. A problem with it must not undo the scaffold.
+let guideNote = 'guide.html';
+try {
+  writeGuide(experiencePath, {
+    code: experienceCode,
+    prefix: client,
+    site: clients[client],
+    asana: option('asana'),
+    figma: option('figma'),
+  });
+} catch (err) {
+  guideNote = `(guide.html was not written: ${err.message})`;
+}
+
 console.log(`
 Created: ${experiencePath}
 
@@ -133,8 +158,10 @@ Structure:
   ${experienceCode}/
   ├── variation-1/
   ├── variation-2/
-  └── control/
+  ├── control/
+  └── ${guideNote}
 
 Next:
+  Open experiences/${experienceCode}/guide.html in a browser. It is filled in for this experience.
   node test.js ${experienceCode} variation-1
 `);

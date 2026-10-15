@@ -11,7 +11,7 @@ npm install
 ## Build one
 
 1. **Branch.** Name it after the test ID, e.g. `FN092`, and start it from `main`: `git fetch && git checkout --no-track -b FN092 origin/main`. Push it with `git push origin FN092` and leave it there. It is never merged with `main` and gets no pull request.
-2. **Scaffold.** `npm run scaffold -- FN092`. The client comes from the code's prefix (see `clients.json`; add the prefix first if it is missing). It creates `variation-1`, `variation-2` and `control`: delete the folders the ticket does not need.
+2. **Scaffold.** `npm run scaffold -- FN092`. The client comes from the code's prefix (see `clients.json`; add the prefix first if it is missing). It creates `variation-1`, `variation-2` and `control`: delete the folders the ticket does not need. It also writes `experiences/FN092/guide.html`, a step-by-step page already filled in for this experience: open it in a browser. To put the ticket and Figma links in its prompts, add `--asana="<link>" --figma="<link>"`.
 3. **Test while you build.** `node test.js FN092 variation-1` opens the client's site in Chrome, injects your code and CSS, and reloads when you save. The page's console prints in your terminal. For the control: `node test.js FN092 control`.
 4. **Write the code.**
    - Plain JavaScript in `experiences/FN092/variation-1/src/index.js`. No imports.

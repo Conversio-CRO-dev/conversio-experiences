@@ -13,8 +13,9 @@ A shared repo for building experiences that are delivered through the client's t
 | `experiences/<ID>/control/src/index.js` | The control. Tracking only, same events, no page changes. |
 | `experiences/<ID>/<folder>/src/styles.scss` | CSS for that folder, if it has any. `test.js` compiles and injects it; the build writes the compiled `dist/<ID>/<folder>/styles.css`. |
 | `experiences/<ID>/package.json`, `<folder>/webpack.config.js` | Made by the scaffold. Leave them. |
+| `experiences/<ID>/guide.html` | Step-by-step page for that experience, already filled in with its ID, client site and links. Made by the scaffold, for people to open in a browser. |
 | `clients.json` | Prefix to client site URL. The only client list. |
-| `scripts/scaffold.js`, `scripts/build.js`, `scripts/lib/experience.js` | Scaffold, build, and the shared lookup of experiences and sites. |
+| `scripts/scaffold.js`, `scripts/build.js`, `scripts/guide.js`, `scripts/lib/`, `scripts/templates/` | Scaffold, build, the guide page (`templates/experience-guide.html` is its source), and the shared lookup of experiences and sites. |
 | `packages/tester` | `npm run tester -- test <ID> <folder>`: bundles the folder with webpack, then injects the bundle. An extra check. The bundle is not what gets pasted. |
 | `packages/helpers` | Optional shared helpers (`elementReady`, `init`, ...). Experiences do not import them. |
 
@@ -58,7 +59,8 @@ Shapes the generator has produced so far, for reference only (the pasted snippet
 ## Run
 
 - `npm install` once.
-- `npm run scaffold -- <ID> [--client=<PREFIX>]` creates `variation-1`, `variation-2` and `control`, each with a one-line starter. Delete the folders the ticket does not need. The client comes from the code's prefix.
+- `npm run scaffold -- <ID> [--client=<PREFIX>] [--asana="<link>"] [--figma="<link>"]` creates `variation-1`, `variation-2` and `control`, each with a one-line starter, and `guide.html`. Delete the folders the ticket does not need. The client comes from the code's prefix. The links are optional and go into the guide's prompts.
+- `npm run guide -- <ID> [--asana="<link>"] [--figma="<link>"]` rewrites `guide.html`, for example to add the ticket links, or to make the page for an older experience. Pass both links every time.
 - `node test.js <ID> <folder> [url]` opens Chrome on the client's site and injects that folder's `index.js` and compiled `styles.scss` on every page load. It reloads on save and prints the page's console in the terminal. `<folder>` is `variation-1`, `variation-2` or `control` (default `variation-1`).
 - `npm run build:experience -- <ID> [folder]` compiles the folder's SCSS to `dist/<ID>/<folder>/styles.css` (every folder if none is named) and warns about `${` or imports in the source. It also writes `main.js`, a webpack bundle for the tester package. Do not paste that.
 - What goes into the testing tool: the folder's `src/index.js` as it is, and the `styles.css` if the build wrote one. Nothing is bundled or changed for you.

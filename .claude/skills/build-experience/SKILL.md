@@ -17,7 +17,7 @@ Use the Asana tools (`get_task`, `get_task_stories`, `get_attachments`). Pull ou
 
 The branch is never merged with `main` and never gets a pull request. Do not merge, rebase or open a pull request for it, and do not offer to. When the experience is done, it stays a branch.
 
-`npm run scaffold -- <ID>` creates `variation-1`, `variation-2` and `control`, each with a one-line starter. Delete the folders the ticket does not need.
+`npm run scaffold -- <ID>` creates `variation-1`, `variation-2` and `control`, each with a one-line starter, and `guide.html`, a step-by-step page for the user that is already filled in for this experience. Delete the folders the ticket does not need. If the user gives you the Asana or Figma links, `npm run guide -- <ID> --asana="<link>" --figma="<link>"` puts them in that page.
 
 ## 3. Figma: exact values, required
 
