@@ -110,11 +110,14 @@
   }
 
   .step {
-    display: grid; grid-template-columns: 40px 1fr; gap: 14px;
+    /* minmax(0, 1fr), not 1fr: a plain 1fr will not shrink below its widest content, so a long
+       command or table would push out of the card. This lets wide content scroll or wrap inside it. */
+    display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 14px;
     margin: 0 0 16px; padding: 18px 16px;
     background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
     scroll-margin-top: 72px;
   }
+  .step > div { min-width: 0; }
   .num {
     width: 36px; height: 36px; display: grid; place-items: center;
     font: 700 19px/1 var(--font-head); color: #ffffff; background: var(--pink); border-radius: 50%;
@@ -182,7 +185,7 @@
   footer { margin-top: 40px; padding-top: 16px; border-top: 1px solid var(--border); color: var(--muted); font-size: 14px; }
 
   @media (max-width: 520px) {
-    .step { grid-template-columns: 1fr; }
+    .step { grid-template-columns: minmax(0, 1fr); }
     .num { width: 32px; height: 32px; font-size: 18px; }
     .tab { padding: 10px 6px 7px; font-size: 14px; }
   }
