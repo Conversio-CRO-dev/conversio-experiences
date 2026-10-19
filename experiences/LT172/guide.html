@@ -1,0 +1,690 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LT172 guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* Conversio brand colours, as used on conversio.com */
+    --navy: #03081f;
+    --navy-2: #050c2f;
+    --pink: #ff0b78;
+
+    /* Light theme. Tints are the brand colours over white: navy 8%, pink 10%. */
+    --bg: #f2f2f2;
+    --surface: #ffffff;
+    --text: #03081f;
+    --muted: #565b73;
+    --border: #d9dbe3;
+    --link: #03081f;
+    --tint: #ebebed;
+    --note-bg: #ebebed;
+    --rule-bg: #ffe7f2;
+    --code-head: #050c2f;
+
+    --font-head: "Inter Tight", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      /* Dark theme: navy surfaces. Tints are white 10% and pink 14% over navy 2. */
+      --bg: #03081f;
+      --surface: #050c2f;
+      --text: #ffffff;
+      --muted: #b3b5bc;
+      --border: #282e4c;
+      --link: #ff0b78;
+      --tint: #1e2444;
+      --note-bg: #1e2444;
+      --rule-bg: #280c39;
+      --code-head: #1e2444;
+    }
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 16px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  .wrap { max-width: 780px; margin: 0 auto; padding: 28px 16px 80px; }
+  a { color: var(--link); text-decoration-color: var(--pink); text-decoration-thickness: 2px; text-underline-offset: 3px; }
+  h1, h2, h3, .tab, .btn { font-family: var(--font-head); }
+
+  /* Header band */
+  .hero { background: var(--navy); color: #ffffff; border-bottom: 4px solid var(--pink); }
+  .hero-in { max-width: 780px; margin: 0 auto; padding: 36px 16px 30px; }
+  .eyebrow {
+    display: flex; align-items: center; gap: 10px; margin: 0 0 12px;
+    font: 600 13px/1 var(--font-head); letter-spacing: .1em; text-transform: uppercase; color: #ffffff;
+  }
+  .eyebrow::before { content: ""; width: 28px; height: 4px; background: var(--pink); border-radius: 2px; }
+  h1 { margin: 0 0 12px; font-size: clamp(28px, 5.4vw, 40px); font-weight: 600; line-height: 1.12; overflow-wrap: anywhere; }
+  .lead { margin: 0; max-width: 62ch; color: rgba(255,255,255,.8); font-size: 17px; }
+
+  .rule {
+    margin: 0 0 20px; padding: 14px 16px; border-radius: 8px;
+    background: var(--rule-bg); border: 1px solid var(--pink); border-left-width: 6px;
+  }
+  .rule strong { display: block; margin-bottom: 2px; }
+
+  /* Tabs */
+  .tabs {
+    position: sticky; top: 8px; z-index: 10;
+    display: flex; gap: 4px; margin: 0 0 20px; padding: 4px;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+  }
+  .tab {
+    flex: 1; padding: 11px 12px 8px; font-size: 16px; font-weight: 600; cursor: pointer;
+    color: var(--muted); background: transparent; border: 0; border-bottom: 4px solid transparent; border-radius: 4px;
+  }
+  .tab:hover { color: var(--text); background: var(--tint); }
+  .tab[aria-selected="true"] { color: var(--text); font-weight: 700; background: var(--tint); border-bottom-color: var(--pink); }
+  .tab:focus-visible { outline: 2px solid var(--pink); outline-offset: 2px; }
+  [role="tabpanel"] { scroll-margin-top: 72px; }
+  [role="tabpanel"][hidden] { display: none; }
+
+  .facts {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 1px;
+    margin: 0; background: var(--border); border: 1px solid var(--border); border-radius: 8px; overflow: hidden;
+  }
+  .facts div { padding: 10px 14px; background: var(--surface); }
+  .facts dt { font-size: 12px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); }
+  .facts dd { margin: 2px 0 0; font-weight: 600; overflow-wrap: anywhere; }
+
+  .toc { margin: 20px 0 8px; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 8px; }
+  .pill {
+    display: inline-block; padding: 4px 10px; font: 600 13px/1.4 var(--font-head); cursor: pointer;
+    color: var(--text); background: var(--tint); border: 1px solid var(--border); border-radius: 999px;
+  }
+  .pill:hover { border-color: var(--pink); }
+  .pill:focus-visible, .link:focus-visible { outline: 2px solid var(--pink); outline-offset: 2px; }
+
+  /* A button that reads as a link in a sentence. In-page navigation uses buttons, not #links, so a
+     preview that loads the page from another address cannot navigate away from it. */
+  .link {
+    display: inline; padding: 0; font: inherit; cursor: pointer; color: var(--link); background: none; border: 0;
+    text-decoration: underline; text-decoration-color: var(--pink); text-decoration-thickness: 2px; text-underline-offset: 3px;
+  }
+
+  .part {
+    margin: 36px 0 12px; font: 700 13px/1.2 var(--font-head); letter-spacing: .1em;
+    text-transform: uppercase; color: var(--muted); scroll-margin-top: 72px;
+  }
+
+  .step {
+    /* minmax(0, 1fr), not 1fr: a plain 1fr will not shrink below its widest content, so a long
+       command or table would push out of the card. This lets wide content scroll or wrap inside it. */
+    display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 14px;
+    margin: 0 0 16px; padding: 18px 16px;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+    scroll-margin-top: 72px;
+  }
+  .step > div { min-width: 0; }
+  .num {
+    width: 36px; height: 36px; display: grid; place-items: center;
+    font: 700 19px/1 var(--font-head); color: #ffffff; background: var(--pink); border-radius: 50%;
+  }
+  .step h3 { margin: 4px 0 8px; font-size: 20px; font-weight: 600; line-height: 1.25; }
+  .step p { margin: 0 0 10px; }
+  .step ul, .step ol { margin: 0 0 12px; padding-left: 20px; }
+  .step li { margin: 3px 0; }
+  .muted { color: var(--muted); font-size: 14px; }
+
+  code {
+    padding: 1px 6px; font: 0.9em ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    background: var(--tint); border-radius: 4px; overflow-wrap: anywhere;
+  }
+
+  .code { margin: 10px 0 14px; border-radius: 8px; overflow: hidden; background: var(--navy); }
+  .code.prompt { border-top: 4px solid var(--pink); }
+  .code-head {
+    display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    min-height: 34px; padding: 6px 10px 6px 14px; background: var(--code-head);
+    font: 600 12px/1 var(--font-head); letter-spacing: .06em; color: #ffffff;
+  }
+  .copy {
+    padding: 5px 12px; font: 600 12px/1 var(--font-head); cursor: pointer;
+    color: #ffffff; background: transparent; border: 1px solid rgba(255,255,255,.45); border-radius: 4px;
+  }
+  .copy:hover { border-color: var(--pink); }
+  .copy:focus-visible { outline: 2px solid var(--pink); outline-offset: 2px; }
+  .copy.done { color: var(--pink); border-color: var(--pink); }
+  .code pre {
+    margin: 0; padding: 12px 14px; overflow-x: auto;
+    font: 13.5px/1.55 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; color: #f2f2f2;
+  }
+  .code.prompt pre { white-space: pre-wrap; overflow-wrap: anywhere; }
+  .code code { padding: 0; background: none; font: inherit; }
+
+  .note {
+    margin: 10px 0 14px; padding: 10px 14px; font-size: 15px;
+    background: var(--note-bg); border: 1px solid var(--border); border-left: 6px solid var(--pink); border-radius: 8px;
+  }
+  .good { font-weight: 700; }
+
+  .btn {
+    display: inline-block; margin-top: 4px; padding: 10px 20px;
+    font-size: 19px; font-weight: 700; line-height: 1.2; cursor: pointer;
+    color: #ffffff; background: var(--pink); border: 0; border-radius: 4px;
+  }
+  .btn:hover { filter: brightness(.92); }
+  .btn:focus-visible { outline: 2px solid var(--text); outline-offset: 3px; }
+
+  details {
+    margin: 0 0 16px; padding: 14px 16px;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+  }
+  summary { cursor: pointer; font: 600 16px/1.4 var(--font-head); }
+  details[open] summary { margin-bottom: 8px; }
+  details p { margin: 0 0 10px; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 15px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+  th, td { padding: 10px 12px; text-align: left; vertical-align: top; border-bottom: 1px solid var(--border); }
+  th { font: 600 13px/1.2 var(--font-head); color: var(--muted); background: var(--tint); }
+  tr:last-child td { border-bottom: 0; }
+  .step table { margin: 4px 0 12px; }
+
+  footer { margin-top: 40px; padding-top: 16px; border-top: 1px solid var(--border); color: var(--muted); font-size: 14px; }
+
+  @media (max-width: 520px) {
+    .step { grid-template-columns: minmax(0, 1fr); }
+    .num { width: 32px; height: 32px; font-size: 18px; }
+    .tab { padding: 10px 6px 7px; font-size: 14px; }
+  }
+</style>
+<noscript>
+  <style>
+    .tabs { display: none; }
+    [role="tabpanel"][hidden] { display: block; }
+  </style>
+</noscript>
+</head>
+<body>
+
+  <header class="hero">
+    <div class="hero-in">
+      <p class="eyebrow">Conversio CRO · LT</p>
+      <h1>LT172: build it step by step</h1>
+      <p class="lead">This page was made for LT172 and is already filled in. The first tab sets up the repository, shows how to create a branch for a new experience, and shows how to use it. The second tab builds this experience. Every command and prompt is ready to copy.</p>
+    </div>
+  </header>
+
+<div class="wrap">
+
+  <div class="rule" role="note">
+    <strong>The one rule: nothing is ever merged with main.</strong>
+    This experience is its own branch with its own code, and it stays a branch. No merges, no pull requests. <code>main</code> holds only the shared tooling and docs. Claude is told the same thing by the repo, so if it ever offers to merge or open a pull request, say no.
+  </div>
+
+  <div class="tabs" role="tablist" aria-label="Guide sections">
+    <button class="tab" role="tab" id="tab-setup" aria-controls="setup" aria-selected="true" type="button">Set up the repository</button>
+    <button class="tab" role="tab" id="tab-build" aria-controls="build" aria-selected="false" tabindex="-1" type="button">Build LT172</button>
+  </div>
+
+  <!-- ===== Tab 1: set up the repository and how to use it ===== -->
+  <div role="tabpanel" id="setup" aria-labelledby="tab-setup">
+
+    <div class="note">Starting a new experience? <button class="link" type="button" data-goto="t5">Go to step 5, create a branch</button>. Steps 1 to 4 are one-off setup.</div>
+
+    <ul class="toc" aria-label="Setup steps">
+      <li><button type="button" class="pill" data-goto="t1">1 Needs</button></li>
+      <li><button type="button" class="pill" data-goto="t2">2 Repository</button></li>
+      <li><button type="button" class="pill" data-goto="t3">3 Claude Code</button></li>
+      <li><button type="button" class="pill" data-goto="t4">4 Asana and Figma</button></li>
+      <li><button type="button" class="pill" data-goto="t5">5 New branch</button></li>
+      <li><button type="button" class="pill" data-goto="t6">6 How to use it</button></li>
+      <li><button type="button" class="pill" data-goto="setup-help">Help</button></li>
+    </ul>
+
+    <h2 class="part">Once per person</h2>
+
+    <section class="step" id="t1">
+      <div class="num">1</div>
+      <div>
+        <h3>What you need</h3>
+        <ul>
+          <li>Git, and access to the <strong>Conversio-CRO-dev</strong> organisation on GitHub with an SSH key set up. The clone below uses SSH.</li>
+          <li>Node.js 18 or newer (it comes with npm).</li>
+          <li>Claude Code: the terminal app, or the Claude desktop app (Code tab).</li>
+          <li>Access to Asana (for the ticket) and Figma (for the design).</li>
+          <li>Optional: a Mac with Xcode, for the iOS Simulator, to check phone-only problems.</li>
+        </ul>
+        <p>Check what you have. Node should say <code>v18</code> or higher:</p>
+        <div class="code">
+          <div class="code-head"><span>TERMINAL</span><button class="copy" type="button">Copy</button></div>
+<pre><code>git --version
+node --version
+npm --version</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <section class="step" id="t2">
+      <div class="num">2</div>
+      <div>
+        <h3>Get the right repository</h3>
+        <p>Build every new experience in <strong>conversio-experiences</strong>:</p>
+        <div class="code">
+          <div class="code-head"><span>TERMINAL (ONCE)</span><button class="copy" type="button">Copy</button></div>
+<pre><code>git clone git@github.com:Conversio-CRO-dev/conversio-experiences.git
+cd conversio-experiences
+npm install</code></pre>
+        </div>
+        <p><code>npm install</code> installs everything the build and the test runner need, including the browser the test runner opens. It can take a minute. You only run it once.</p>
+        <p><strong>Check you have the right one:</strong></p>
+        <div class="code">
+          <div class="code-head"><span>TERMINAL</span><button class="copy" type="button">Copy</button></div>
+<pre><code>git remote -v
+ls</code></pre>
+        </div>
+        <p>The remote ends in <code>conversio-experiences.git</code>, and you see <code>experiences</code>, <code>scripts</code>, <code>clients.json</code> and <code>CLAUDE.md</code>.</p>
+        <div class="note">If you see <code>src/variation1.js</code> and <code>dummyControl.js</code> instead, you are in the older flat starter (<code>AC-Dev-Code</code>), not this repository. New experiences are built in <code>conversio-experiences</code>.</div>
+      </div>
+    </section>
+
+    <section class="step" id="t3">
+      <div class="num">3</div>
+      <div>
+        <h3>Open Claude Code in it</h3>
+        <p>Open Claude Code inside the repository folder: run <code>claude</code> in the terminal, or open the folder in the Claude desktop app (Code tab).</p>
+        <p>Claude reads <code>CLAUDE.md</code> in the repo root by itself (the naming, the tracking rules and the one rule), and finds the <code>build-experience</code> skill in <code>.claude/skills/</code>. You do not install either: they come with the repository, on any branch started from <code>main</code>.</p>
+      </div>
+    </section>
+
+    <section class="step" id="t4">
+      <div class="num">4</div>
+      <div>
+        <h3>Connect Asana and Figma</h3>
+        <p>Claude reads the ticket and the design through two connectors. Each person connects their own: authorise Asana and Figma in your Claude connector settings (or with <code>/mcp</code> in a terminal Claude Code), and sign in when asked. You also need access to the ticket in Asana and to the file in Figma.</p>
+        <p>Check both work before you build anything:</p>
+        <div class="code prompt">
+          <div class="code-head"><span>SAY TO CLAUDE</span><button class="copy" type="button">Copy</button></div>
+<pre><code>Check you can reach Asana and Figma for LT172.
+
+Asana ticket: https://app.asana.com/1/1200112442653542/project/1201486953842830/task/1218274330167211
+Figma: https://www.figma.com/design/6TcSJEwdwEy8SQu8HKm1gr/LT--%7C-Mini-Basket?node-id=0-1&amp;p=f&amp;m=dev
+
+Using the Asana tools, read the ticket and tell me its title and the list of events. Then call get_design_context and get_variable_defs on the first Figma frame and tell me the frame name and three of its colours.</code></pre>
+        </div>
+        <div class="note"><strong>Stop here if either one says the tools are not available.</strong> Fix the connection first. Without the exact Figma values Claude would work from a screenshot, and the build would not be accurate.</div>
+      </div>
+    </section>
+
+    <h2 class="part">Using the repository</h2>
+
+    <section class="step" id="t5">
+      <div class="num">5</div>
+      <div>
+        <h3>Create a branch for a new experience</h3>
+        <p>Every experience is its own branch, named after the test ID on the Asana ticket, for example <code>FN092</code>. A follow-up to a test takes a suffix, such as <code>LT155.1</code>. Always start the branch from <code>main</code>. In the commands below, replace <code>&lt;ID&gt;</code> with your test ID.</p>
+
+        <p><strong>A. Check the client is listed.</strong> The client is the letters at the start of the test ID (the <code>FN</code> in <code>FN092</code>).</p>
+        <div class="code">
+          <div class="code-head"><span>TERMINAL</span><button class="copy" type="button">Copy</button></div>
+<pre><code>git fetch &amp;&amp; git show origin/main:clients.json</code></pre>
+        </div>
+        <p>Your client's prefix should be in the list with a site next to it. A blank site counts as missing. If it is not there, ask whoever maintains <code>main</code> to add it, and wait for that before you go on. The branch has to start after the client is added.</p>
+
+        <p><strong>B. Make the branch.</strong></p>
+        <div class="code">
+          <div class="code-head"><span>TERMINAL</span><button class="copy" type="button">Copy</button></div>
+<pre><code>git checkout --no-track -b &lt;ID&gt; origin/main
+git branch --show-current</code></pre>
+        </div>
+        <p>The second command should print your test ID. <code>--no-track</code> stops the branch following <code>main</code>, so a stray <code>git pull</code> can never bring <code>main</code> into it.</p>
+
+        <p><strong>C. Create the folders.</strong></p>
+        <div class="code">
+          <div class="code-head"><span>TERMINAL</span><button class="copy" type="button">Copy</button></div>
+<pre><code>npm run scaffold -- &lt;ID&gt; --asana="&lt;ticket link&gt;" --figma="&lt;frame link&gt;"</code></pre>
+        </div>
+        <p>The two links are optional. They go into the new guide's prompts, so Claude does not have to search for the ticket. Without them it finds the ticket by the test ID.</p>
+        <p>This creates <code>experiences/&lt;ID&gt;/</code> with <code>variation-1</code>, <code>variation-2</code> and <code>control</code>, each with a one-line starter. Delete the folders the ticket does not need. It also writes a new <code>guide.html</code>, already filled in for that experience.</p>
+
+        <p><strong>D. Open the new guide.</strong> Open <code>experiences/&lt;ID&gt;/guide.html</code> in a browser. Its Build tab takes you from here: ticket, Figma, build, events, paste.</p>
+        <p class="muted">When you are done, push the branch with <code>git push origin &lt;ID&gt;</code> and stop. It is never merged and gets no pull request.</p>
+      </div>
+    </section>
+
+    <section class="step" id="t6">
+      <div class="num">6</div>
+      <div>
+        <h3>How you use it</h3>
+        <p>The commands you will use, in the order you use them (shown for LT172):</p>
+        <table>
+          <thead><tr><th>Command</th><th>What it does</th></tr></thead>
+          <tbody>
+            <tr><td><code>git fetch &amp;&amp; git checkout --no-track -b LT172 origin/main</code></td><td>Starts the experience's own branch from <code>main</code>.</td></tr>
+            <tr><td><code>npm run scaffold -- LT172</code></td><td>Creates the folders and this guide.</td></tr>
+            <tr><td><code>node test.js LT172 variation-1</code></td><td>Opens the client's site with your code injected, reloads on save.</td></tr>
+            <tr><td><code>npm run build:experience -- LT172</code></td><td>Compiles the CSS to paste and checks the source.</td></tr>
+            <tr><td><code>git push origin LT172</code></td><td>Pushes the branch. Then stop: it is never merged.</td></tr>
+            <tr><td><code>npm run guide -- LT172</code></td><td>Rewrites this guide, for example to add the ticket links.</td></tr>
+          </tbody>
+        </table>
+        <p>Where things are:</p>
+        <div class="code">
+          <div class="code-head"><span>THE REPOSITORY</span></div>
+<pre><code>experiences/LT172/
+├── variation-1/src/index.js, styles.scss   the variation (plain JavaScript, no imports)
+├── variation-2/...                          only if the ticket has two variations
+├── control/src/index.js                     tracking only, no page changes
+├── guide.html                               this page
+└── package.json
+clients.json                                 client prefix to site (FN, LT, WN, BM, ...)
+scripts/                                     scaffold, build and guide
+CLAUDE.md                                    the rules Claude follows
+.claude/skills/build-experience/             the skill Claude builds with</code></pre>
+        </div>
+        <p>Rules to remember:</p>
+        <ul>
+          <li>Nothing is ever merged with <code>main</code>, and no pull requests.</li>
+          <li>Plain JavaScript only, no imports, and no <code>${...}</code> in the file.</li>
+          <li>Guard the script so a second run does nothing, and remove every <code>console</code> line before it goes out for testing.</li>
+          <li>Only real user clicks fire an event: check <code>event.isTrusted</code> if the experience clicks a button itself.</li>
+        </ul>
+        <p class="muted">A branch keeps the tooling it started with. New branches start from <code>main</code>, so they get the latest.</p>
+      </div>
+    </section>
+
+    <h2 class="part" id="setup-help">If setup goes wrong</h2>
+    <table>
+      <thead><tr><th>What you see</th><th>What to do</th></tr></thead>
+      <tbody>
+        <tr><td><code>Permission denied (publickey)</code> when cloning</td><td>Your SSH key is not on your GitHub account, or you are not in the Conversio-CRO-dev organisation. Add the key in your GitHub settings and ask to be added.</td></tr>
+        <tr><td><code>npm install</code> fails or complains about the version</td><td>Run <code>node --version</code>. It needs to be 18 or higher.</td></tr>
+        <tr><td>Chrome will not open when you test</td><td>Run <code>npm install</code> again.</td></tr>
+        <tr><td><code>claude: command not found</code></td><td>Claude Code is not installed. Install it, or open the folder in the Claude desktop app (Code tab).</td></tr>
+        <tr><td>Claude does not know the build-experience skill</td><td>Check you are in the repository folder and that <code>ls .claude/skills</code> shows it. A branch started before the skill existed will not have it: start from <code>origin/main</code>.</td></tr>
+      </tbody>
+    </table>
+
+    <p style="margin-top:24px"><button class="btn" type="button" data-goto="build">Setup done? Go to the Build tab</button></p>
+  </div>
+
+  <!-- ===== Tab 2: build this experience ===== -->
+  <div role="tabpanel" id="build" aria-labelledby="tab-build" hidden>
+
+    <dl class="facts">
+      <div><dt>Test ID</dt><dd>LT172</dd></div>
+      <div><dt>Branch</dt><dd>LT172</dd></div>
+      <div><dt>Client site</dt><dd>https://www.laithwaites.co.uk</dd></div>
+      <div><dt>Folder</dt><dd>experiences/LT172/</dd></div>
+    </dl>
+
+    <div class="note">First time on this repository? Do the <button class="link" type="button" data-goto="setup">Set up the repository</button> tab once, including connecting Asana and Figma. Claude needs both to build this accurately.</div>
+
+    <ul class="toc" aria-label="Steps">
+      <li><button type="button" class="pill" data-goto="s1">1 Ticket</button></li>
+      <li><button type="button" class="pill" data-goto="s2">2 Build</button></li>
+      <li><button type="button" class="pill" data-goto="s3">3 Test</button></li>
+      <li><button type="button" class="pill" data-goto="s4">4 Events</button></li>
+      <li><button type="button" class="pill" data-goto="s5">5 Clean up</button></li>
+      <li><button type="button" class="pill" data-goto="s6">6 Ship</button></li>
+      <li><button type="button" class="pill" data-goto="s7">7 Push</button></li>
+      <li><button type="button" class="pill" data-goto="help">Help</button></li>
+    </ul>
+
+    <section class="step" id="s1">
+      <div class="num">1</div>
+      <div>
+        <h3>Make sure the Asana ticket has what Claude needs</h3>
+        <ul>
+          <li>The test ID <code>LT172</code> in the ticket, so Claude can find it. The ticket ID, the branch name and the folder name are all the same.</li>
+          <li>The page it runs on, and which tool it is for: Dynamic Yield, Adobe Target or AB Tasty.</li>
+          <li>What each variation changes, in words.</li>
+          <li>A Figma link for every frame and state: mobile, desktop, open, closed.</li>
+          <li>The event list: the name of each event, when it fires and how often.</li>
+        </ul>
+        <p class="muted">If something is missing Claude asks. It does not guess selectors, copy or events.</p>
+        <p>If you have the links, put them on this page so the prompts carry them (this rewrites the page):</p>
+        <div class="code">
+          <div class="code-head"><span>TERMINAL (OPTIONAL)</span><button class="copy" type="button">Copy</button></div>
+<pre><code>npm run guide -- LT172 --asana="&lt;ticket link&gt;" --figma="&lt;frame link&gt;"</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <section class="step" id="s2">
+      <div class="num">2</div>
+      <div>
+        <h3>Tell Claude to build it from the ticket and Figma</h3>
+        <div class="code prompt">
+          <div class="code-head"><span>SAY TO CLAUDE</span><button class="copy" type="button">Copy</button></div>
+<pre><code>Use the build-experience skill to build LT172.
+
+Asana ticket: https://app.asana.com/1/1200112442653542/project/1201486953842830/task/1218274330167211
+Figma: https://www.figma.com/design/6TcSJEwdwEy8SQu8HKm1gr/LT--%7C-Mini-Basket?node-id=0-1&amp;p=f&amp;m=dev
+
+Read the ticket with the Asana tools. For every frame and state, call get_design_context and get_variable_defs and use those exact values in the CSS. Do not work from screenshots. If the Figma tools are not available, stop and tell me.
+
+The folders already exist in experiences/LT172/. Build variation-1 (and variation-2 if the ticket has one) and the control. For the events, use a console.log only for now. Do not merge anything and do not open a pull request.</code></pre>
+        </div>
+        <p>What Claude does, in this order:</p>
+        <ol>
+          <li>Reads the ticket (<code>get_task</code>, <code>get_task_stories</code>, <code>get_attachments</code>).</li>
+          <li>Pulls the exact values from Figma for each frame and state: <code>get_design_context</code> for layout, spacing, sizes, text and colours, and <code>get_variable_defs</code> for the design's own tokens. This step is required.</li>
+          <li>Opens the live page and inspects the real DOM before writing any selector.</li>
+          <li>Writes <code>variation-1/src/index.js</code>, then <code>styles.scss</code>, then the behaviour, then the control.</li>
+        </ol>
+        <p><strong>How to check it used Figma properly.</strong> Each frame should show a <code>get_design_context</code> call and a <code>get_variable_defs</code> call. If you only see screenshots, say this:</p>
+        <div class="code prompt">
+          <div class="code-head"><span>SAY TO CLAUDE IF IT SKIPPED FIGMA</span><button class="copy" type="button">Copy</button></div>
+<pre><code>Stop. Call get_design_context and get_variable_defs for each Figma frame and rebuild the CSS from those numbers, not from a screenshot.</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <section class="step" id="s3">
+      <div class="num">3</div>
+      <div>
+        <h3>Test it in the browser while you build</h3>
+        <div class="code">
+          <div class="code-head"><span>TERMINAL</span><button class="copy" type="button">Copy</button></div>
+<pre><code>node test.js LT172 variation-1
+node test.js LT172 control</code></pre>
+        </div>
+        <p>This opens Chrome on the client's site, injects your code and CSS on every page load, and reloads when you save. The page's console prints in your terminal. If the experience runs on another host than the client site shown at the top, add the URL at the end: <code>node test.js LT172 variation-1 https://...</code></p>
+        <p>Check:</p>
+        <ul>
+          <li>The terminal shows no <code>[page:error]</code> lines.</li>
+          <li>It matches Figma at mobile and desktop widths.</li>
+          <li>Phone-only problems show up in Safari, not Chrome's phone mode, so check once in the iOS Simulator.</li>
+          <li>Pages the experience is not meant for are untouched.</li>
+        </ul>
+        <p class="muted">Tell Claude what is wrong in plain words, and paste the terminal lines if there are any.</p>
+      </div>
+    </section>
+
+    <section class="step" id="s4">
+      <div class="num">4</div>
+      <div>
+        <h3>Add the events</h3>
+        <p>While you build, each event is only a <code>console.log</code>. That is on purpose: the tracking push is different for every client, so Claude never writes it from memory.</p>
+        <p>When the experience works:</p>
+        <ol>
+          <li>Open the <strong>event generator app</strong> and generate the events for LT172, with their segments.</li>
+          <li>Copy them and paste them to Claude like this:</li>
+        </ol>
+        <div class="code prompt">
+          <div class="code-head"><span>SAY TO CLAUDE</span><button class="copy" type="button">Copy</button></div>
+<pre><code>These are the events from the event generator for LT172:
+
+[paste them here]
+
+Replace the console.log in logEvent with exactly this, in the variation and in the control: same keys, same casing, same labels and segments. The control uses its own label and the ECO segments from the generator. Only real user clicks may fire an event: if the experience itself clicks a button, check event.isTrusted so that click is ignored. Change nothing else.</code></pre>
+        </div>
+        <p>What the labels and segments look like for LT172:</p>
+        <table>
+          <thead><tr><th>Where</th><th>Label</th><th>Segment</th></tr></thead>
+          <tbody>
+            <tr><td>Variation 1</td><td><code>LT172 | (Variation 1) | &lt;Event name&gt;</code></td><td><code>LT172EV1&lt;letter&gt;</code></td></tr>
+            <tr><td>Variation 2</td><td><code>LT172 | (Variation 2) | &lt;Event name&gt;</code></td><td><code>LT172EV2&lt;letter&gt;</code></td></tr>
+            <tr><td>Control</td><td><code>LT172 | (Control Original) | &lt;Event name&gt;</code></td><td><code>LT172ECO&lt;letter&gt;</code></td></tr>
+          </tbody>
+        </table>
+        <p class="muted" style="margin-top:10px">The generator's snippet is the source of truth. The letters are the same in the variation and the control.</p>
+        <p>Then check with <code>node test.js</code>: tick every event in the ticket's list, each one fires once per interaction, and the control sends the same events and leaves the page unchanged.</p>
+      </div>
+    </section>
+
+    <section class="step" id="s5">
+      <div class="num">5</div>
+      <div>
+        <h3>Clean up and build</h3>
+        <div class="code prompt">
+          <div class="code-head"><span>SAY TO CLAUDE</span><button class="copy" type="button">Copy</button></div>
+<pre><code>Remove every console line from LT172, in all folders. Then check there is no ${...} anywhere in the JS.</code></pre>
+        </div>
+        <div class="code">
+          <div class="code-head"><span>TERMINAL</span><button class="copy" type="button">Copy</button></div>
+<pre><code>npm run build:experience -- LT172</code></pre>
+        </div>
+        <p><span class="good">Good result:</span> no warnings, and for each folder a line saying which JS file and which CSS file to paste. The CSS is compiled to <code>dist/LT172/&lt;folder&gt;/styles.css</code>. The build also writes a <code>main.js</code>. Ignore it: it is not what you paste.</p>
+      </div>
+    </section>
+
+    <section class="step" id="s6">
+      <div class="num">6</div>
+      <div>
+        <h3>Paste it into the testing tool</h3>
+        <p>Into Dynamic Yield, Adobe Target or AB Tasty, paste exactly these two things for each variation:</p>
+        <ul>
+          <li>The JS file as it is: <code>experiences/LT172/&lt;folder&gt;/src/index.js</code></li>
+          <li>The CSS file, if the folder has one: <code>dist/LT172/&lt;folder&gt;/styles.css</code></li>
+        </ul>
+        <p>Nothing is bundled or changed for you. Dynamic Yield and Adobe Target do not support <code>${...}</code>, and the file goes in exactly as written, so build strings with <code>+</code>.</p>
+        <div class="note">Check the tool's preview, not only <code>node test.js</code>: the test run injects after the page has loaded, so it hides flicker. Previews can serve an older save for a few minutes, so reload and confirm you are on the latest.</div>
+      </div>
+    </section>
+
+    <section class="step" id="s7">
+      <div class="num">7</div>
+      <div>
+        <h3>Push the branch and stop</h3>
+        <div class="code">
+          <div class="code-head"><span>TERMINAL</span><button class="copy" type="button">Copy</button></div>
+<pre><code>git push origin LT172</code></pre>
+        </div>
+        <p>That is the end. <strong>Do not merge it and do not open a pull request.</strong> The branch stays a branch.</p>
+      </div>
+    </section>
+
+    <details>
+      <summary>How LT172 was set up</summary>
+      <p>The scaffold has already done this. It is here for reference.</p>
+      <div class="code">
+        <div class="code-head"><span>TERMINAL</span><button class="copy" type="button">Copy</button></div>
+<pre><code>git fetch &amp;&amp; git checkout --no-track -b LT172 origin/main
+npm run scaffold -- LT172</code></pre>
+      </div>
+      <p class="muted">The scaffold made <code>variation-1</code>, <code>variation-2</code> and <code>control</code>, each with a one-line starter, plus this page. Delete the folders the ticket does not need, for example <code>rm -r experiences/LT172/variation-2</code>. To start a different experience, see step 5 of the <button class="link" type="button" data-goto="t5">Set up tab</button>.</p>
+    </details>
+
+    <h2 class="part" id="help">If something goes wrong</h2>
+    <table>
+      <thead><tr><th>What you see</th><th>What to do</th></tr></thead>
+      <tbody>
+        <tr><td>Claude says the Asana or Figma tools are not available</td><td>Reconnect the connector (Set up tab, step 4), start a new Claude session, and run the check again. Do not let it carry on from a screenshot.</td></tr>
+        <tr><td>The scaffold says the prefix is unknown</td><td>The client is not in <code>clients.json</code>. Ask whoever maintains <code>main</code> to add the site, then start again.</td></tr>
+        <tr><td>Chrome will not open</td><td>Run <code>npm install</code> again.</td></tr>
+        <tr><td><code>node test.js</code> refuses the file</td><td>It has an <code>import</code> or <code>export</code>. Experiences are plain JavaScript: write the helper in the file.</td></tr>
+        <tr><td>Nothing appears on the page</td><td>Open DevTools (F12) and look at the console. The terminal also shows <code>[page:error]</code> lines.</td></tr>
+        <tr><td>The preview shows an older version</td><td>Previews can lag after a save. Reload, or use the new preview link.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <footer>
+    The repo is the source of truth: <code>CLAUDE.md</code>, <code>CONTRIBUTING.md</code> and <code>.claude/skills/build-experience/SKILL.md</code>. If this page and those disagree, the repo wins.
+  </footer>
+
+</div>
+
+<script>
+(function () {
+  // Tabs
+  var tabs = Array.prototype.slice.call(document.querySelectorAll('[role="tab"]'));
+
+  function show(tab, focus) {
+    tabs.forEach(function (t) {
+      var on = t === tab;
+      t.setAttribute('aria-selected', on ? 'true' : 'false');
+      t.tabIndex = on ? 0 : -1;
+      document.getElementById(t.getAttribute('aria-controls')).hidden = !on;
+    });
+    if (focus) tab.focus();
+  }
+
+  tabs.forEach(function (tab, i) {
+    tab.addEventListener('click', function () { show(tab); });
+    tab.addEventListener('keydown', function (event) {
+      var next = null;
+      if (event.key === 'ArrowRight') next = tabs[(i + 1) % tabs.length];
+      if (event.key === 'ArrowLeft') next = tabs[(i - 1 + tabs.length) % tabs.length];
+      if (event.key === 'Home') next = tabs[0];
+      if (event.key === 'End') next = tabs[tabs.length - 1];
+      if (next) {
+        event.preventDefault();
+        show(next, true);
+      }
+    });
+  });
+
+  // Buttons with data-goto="<id>" open the tab that holds that id, then scroll to it. They are
+  // buttons, not #links, so nothing navigates and the page cannot be left, whatever shows it.
+  document.addEventListener('click', function (event) {
+    var button = event.target.closest('[data-goto]');
+    var target = button ? document.getElementById(button.getAttribute('data-goto')) : null;
+    if (!target) return;
+    var panel = target.closest('[role="tabpanel"]');
+    if (panel) show(document.getElementById(panel.getAttribute('aria-labelledby')));
+    target.scrollIntoView();
+  });
+
+  // Copy buttons
+  function fallbackCopy(text) {
+    var area = document.createElement('textarea');
+    area.value = text;
+    area.setAttribute('readonly', '');
+    area.style.position = 'fixed';
+    area.style.opacity = '0';
+    document.body.appendChild(area);
+    area.select();
+    try { document.execCommand('copy'); } catch (e) {}
+    document.body.removeChild(area);
+  }
+
+  function copyText(text) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      return navigator.clipboard.writeText(text).catch(function () { fallbackCopy(text); });
+    }
+    fallbackCopy(text);
+    return Promise.resolve();
+  }
+
+  var buttons = document.querySelectorAll('.copy');
+  for (var i = 0; i < buttons.length; i++) {
+    buttons[i].addEventListener('click', function (event) {
+      var button = event.currentTarget;
+      var text = button.closest('.code').querySelector('pre').innerText.replace(/\s+$/, '');
+      copyText(text).then(function () {
+        button.textContent = 'Copied';
+        button.className = 'copy done';
+        setTimeout(function () {
+          button.textContent = 'Copy';
+          button.className = 'copy';
+        }, 1500);
+      });
+    });
+  }
+})();
+</script>
+</body>
+</html>

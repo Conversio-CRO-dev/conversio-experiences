@@ -1,0 +1,16 @@
+{
+  "name": "experience-lt172",
+  "version": "0.1.0",
+  "description": "Conversio CRO experience: LT172",
+  "client": "LT",
+  "scripts": {
+    "build": "npm run build:experience -- LT172",
+    "build:v1": "npm run build:experience -- LT172 variation-1",
+    "build:v2": "npm run build:experience -- LT172 variation-2",
+    "build:control": "npm run build:experience -- LT172 control",
+    "test:v1": "node test.js LT172 variation-1",
+    "test:v2": "node test.js LT172 variation-2",
+    "test:control": "node test.js LT172 control"
+  },
+  "private": true
+}
