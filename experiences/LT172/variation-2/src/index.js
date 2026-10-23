@@ -17,7 +17,7 @@ if (!window.__lt172Initialized) {
     });
   }
 
-  // Variation 2: the basket price and the item count above the CTAs, CTAs side by side (Checkout, then View basket).
+  // Variation 2: the basket price and the item count above the CTAs, CTAs side by side (View basket, then Checkout).
   var ROOT = '.mantine-Modal-content-minicart';
   var FOOTER = ROOT + ' .button-container.minicart-sticky-cta';
   var HEADER_PRICE = '[data-testid="header-cart-price"]';
@@ -29,7 +29,8 @@ if (!window.__lt172Initialized) {
   // That is done in CSS, so the site's own button text is never touched.
   var STYLES =
     FOOTER + '.lt172-footer{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;padding:16px;}' +
-    FOOTER + '.lt172-footer a[href="/cart"]{order:1;}' +
+    FOOTER + '.lt172-footer a[href="/cart"]{order:0;}' +
+    FOOTER + '.lt172-footer a[href*="checkout"]{order:1;}' +
     FOOTER + '.lt172-footer button{justify-content:center;padding-left:8px;padding-right:8px;white-space:nowrap;}' +
     FOOTER + '.lt172-footer button.view-basket{font-size:0;}' +
     FOOTER + '.lt172-footer button.view-basket::before{content:"VIEW BASKET";font-size:14px;}' +
