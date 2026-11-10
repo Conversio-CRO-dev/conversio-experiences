@@ -1,11 +1,46 @@
-if (!window.__sy012Initialized) {
-  window.__sy012Initialized = true;
+(function () {
 
-  // Control: same events as variation 1, no page changes. The quicklinks are worked out but never shown.
-  // Event labels from the ticket. Console only while building, the event generator's push replaces it.
-  var EVENT_LABEL = 'SY012 (Control Original) | ';
-  function logEvent(name) {
-    console.log(EVENT_LABEL + name);
+  // Segments and labels from the control event snippets. Labels with "| page type" or "| breadcrumb level" are filled in live.
+  var EXPERIENCE_SEGMENT = 'SY012.XCO';
+  var EXPERIENCE_LABEL = 'SY012 | Control Original';
+  var LABEL_PREFIX = 'SY012 | (Control Original) | ';
+  var SEGMENTS = {
+    trigger: 'SY012ECOQ',
+    quicklinkClick: 'SY012ECOG',
+    plpAtb: 'SY012ECOH',
+    plpClickThrough: 'SY012ECOI',
+    pdpAtb: 'SY012ECOJ',
+    quantityUp: 'SY012ECOK',
+    quantityDown: 'SY012ECOL',
+    breadcrumb: 'SY012ECOM',
+    breadcrumbLevel: 'SY012ECON'
+  };
+
+  // Breadcrumb levels from the brief: 2nd is All, 3rd is More, 5th is Alternatives.
+  // Breadcrumb items are Home (1), then the categories, then the product (no link).
+  var QUICKLINKS = [
+    { level: 2, type: 'All' },
+    { level: 3, type: 'More' },
+    { level: 5, type: 'Alternatives' }
+  ];
+
+  var zoneSelector = 'cx-product-intro h1';
+
+  function pushDataLayer(payload) {
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push(payload);
+  }
+
+  function trackEvent(segment, label) {
+    pushDataLayer({
+      event: 'conversioEvent',
+      conversio: {
+        event_category: 'Conversio CRO',
+        event_action: 'SY012 | Event Tracking',
+        event_label: LABEL_PREFIX + label,
+        event_segment: segment
+      }
+    });
   }
 
   // Session flags, so "once per session" events and the "after a quicklink" steps survive page loads.
@@ -29,14 +64,6 @@ if (!window.__sy012Initialized) {
     return 'PLP';
   }
 
-  // Breadcrumb levels from the brief: 2nd is All, 3rd is More, 5th is Alternatives.
-  // Breadcrumb items are Home (1), then the categories, then the product (no link).
-  var QUICKLINKS = [
-    { level: 2, type: 'All' },
-    { level: 3, type: 'More' },
-    { level: 5, type: 'Alternatives' }
-  ];
-
   function crumbItems() {
     return document.querySelectorAll('nav[aria-label="breadcrumbs"] ol > li');
   }
@@ -50,72 +77,129 @@ if (!window.__sy012Initialized) {
     });
   }
 
-  // Fires the trigger once per session on a PDP where variation 1 would show the quicklinks.
-  function checkQuicklinks() {
+  // Fires the trigger once per session on a PDP where variation 1 would show the quicklinks. Changes nothing on the page.
+  function checkTrigger() {
     if (pageType() !== 'PDP') return;
-    if (!document.querySelector('cx-product-intro h1')) return;
+    if (!document.querySelector(zoneSelector)) return;
     if (!quicklinksWouldShow()) return;
 
     if (!getFlag('sy012-quicklinks-present')) {
       setFlag('sy012-quicklinks-present');
-      logEvent('Quicklinks present (trigger)');
+      trackEvent(SEGMENTS.trigger, 'Quicklinks present (trigger)');
     }
   }
 
-  // One delegated listener: the site re-renders these nodes, and only real clicks count.
+  function crumbLevel(crumb) {
+    return Array.prototype.indexOf.call(crumbItems(), crumb.closest('li')) + 1;
+  }
+
+  // One delegated listener: the storefront re-renders these nodes, and only real clicks count.
   // Clicks on quicklink never happen in control, so the "after a quicklink" flag is never set here.
-  document.addEventListener('click', function (event) {
+  function onClick(event) {
     if (!event.isTrusted) return;
     var target = event.target;
     if (!target || !target.closest) return;
 
     var crumb = target.closest('nav[aria-label="breadcrumbs"] a');
     if (crumb) {
-      var level = Array.prototype.indexOf.call(crumbItems(), crumb.closest('li')) + 1;
-      logEvent('Breadcrumb click');
-      logEvent('Breadcrumb click | ' + level);
+      trackEvent(SEGMENTS.breadcrumb, 'Breadcrumb click');
+      trackEvent(SEGMENTS.breadcrumbLevel, 'Breadcrumb click | ' + crumbLevel(crumb));
       return;
     }
 
     if (target.closest('cx-item-counter button.item-control-add')) {
-      logEvent('Increases quantity | ' + pageType());
+      trackEvent(SEGMENTS.quantityUp, 'Increases quantity | ' + pageType());
       return;
     }
     if (target.closest('cx-item-counter button.item-control-remove')) {
-      logEvent('Decreases quantity | ' + pageType());
+      trackEvent(SEGMENTS.quantityDown, 'Decreases quantity | ' + pageType());
       return;
     }
 
     if (target.closest('cx-add-to-cart button[type="submit"]') && pageType() === 'PDP') {
-      logEvent('ATB from PDP');
+      trackEvent(SEGMENTS.pdpAtb, 'ATB from PDP');
       return;
     }
 
     if (pageType() !== 'PLP' || !getFlag('sy012-quicklink-clicked')) return;
 
     if (target.closest('cx-product-grid-item button[type="submit"]')) {
-      logEvent('ATB from subsequent PLP');
+      trackEvent(SEGMENTS.plpAtb, 'ATB from subsequent PLP');
       return;
     }
     if (target.closest('cx-product-grid-item a[href*="/p/"]')) {
-      logEvent('Click through from subsequent PLP');
+      trackEvent(SEGMENTS.plpClickThrough, 'Click through from subsequent PLP');
     }
-  }, true);
-
-  // The storefront re-renders the PDP on navigation, so re-check after each change (next frame, or 100ms in the background).
-  var scheduled = false;
-  function schedule() {
-    if (scheduled) return;
-    scheduled = true;
-    var run = function () {
-      if (!scheduled) return;
-      scheduled = false;
-      checkQuicklinks();
-    };
-    requestAnimationFrame(run);
-    setTimeout(run, 100);
   }
 
-  new MutationObserver(schedule).observe(document.documentElement, { childList: true, subtree: true });
-  schedule();
-}
+  // Starts tracking once per page load: the experience push, the click listener and the DOM watcher.
+  function startTracking() {
+    if (window.__sy012Initialized) return;
+    window.__sy012Initialized = true;
+
+    pushDataLayer({
+      event: 'conversio_experience',
+      conversio: {
+        experience_category: 'Conversio Experience',
+        experience_action: 'SY012 | Quicklinks on PDPs',
+        experience_label: EXPERIENCE_LABEL,
+        experience_segment: EXPERIENCE_SEGMENT
+      }
+    });
+
+    document.addEventListener('click', onClick, true);
+
+    // Re-check after each DOM change (next frame, or 100ms in the background).
+    var scheduled = false;
+    function schedule() {
+      if (scheduled) return;
+      scheduled = true;
+      var run = function () {
+        if (!scheduled) return;
+        scheduled = false;
+        checkTrigger();
+      };
+      requestAnimationFrame(run);
+      setTimeout(run, 100);
+    }
+    new MutationObserver(schedule).observe(document.documentElement, { childList: true, subtree: true });
+    checkTrigger();
+  }
+
+  function apply(context, template) {
+    // Control never renders, so there is nothing to show here.
+    return Promise.resolve();
+  }
+
+  function reset(context, template) {}
+
+  function control(context) {
+    // Control group: campaign stats attributes on the content zone, then tracking. The page is not changed.
+    // Tracking starts on every page, including PLPs, where the product title never appears.
+    startTracking();
+    if (pageType() !== 'PDP') return Promise.resolve();
+    // The campaign attributes go on the Salesforce content zone; placement does not use it.
+    return Evergage.DisplayUtils
+      .pageElementLoaded(Evergage.getContentZoneSelector(context.contentZone))
+      .then(function (element) {
+        Evergage.cashDom(element).attr({
+          "data-evg-campaign-id": context.campaign,
+          "data-evg-experience-id": context.experience,
+          "data-evg-user-group": context.userGroup
+        });
+      });
+  }
+
+  if (typeof window.registerTemplate === 'function') {
+    // Salesforce Personalization runs this template.
+    registerTemplate({
+      apply: apply,
+      reset: reset,
+      control: control
+    });
+  } else {
+    // Local tester (no Salesforce on the page): run the control directly.
+    startTracking();
+  }
+
+})();
