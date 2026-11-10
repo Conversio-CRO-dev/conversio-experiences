@@ -1,0 +1,16 @@
+{
+  "name": "experience-sy012",
+  "version": "0.1.0",
+  "description": "Conversio CRO experience: SY012",
+  "client": "SY",
+  "scripts": {
+    "build:v1": "npm run build:experience -- SY012 variation-1",
+    "build:control": "npm run build:experience -- SY012 control",
+    "test:v1": "node test.js SY012 variation-1",
+    "test:control": "node test.js SY012 control"
+  },
+  "private": true,
+  "dependencies": {
+    "@conversio/helpers": "*"
+  }
+}
