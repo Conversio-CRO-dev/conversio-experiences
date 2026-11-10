@@ -1,1 +1,41 @@
 // SY012 - variation-1 Styles
+// Quicklinks sit under the product title: one line on phones (scrolls sideways), wraps on desktop.
+
+.sy012-quicklinks {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 8px;
+  margin: 12px 0 16px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  a {
+    flex: 0 0 auto;
+    padding: 8px 16px;
+    border: 1px solid #1b2a4a;
+    border-radius: 999px;
+    background: #fff;
+    color: #1b2a4a;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.2;
+    white-space: nowrap;
+    text-decoration: none;
+
+    &:hover,
+    &:focus-visible {
+      background: #1b2a4a;
+      color: #fff;
+    }
+  }
+
+  @media (min-width: 768px) {
+    flex-wrap: wrap;
+    overflow-x: visible;
+  }
+}
