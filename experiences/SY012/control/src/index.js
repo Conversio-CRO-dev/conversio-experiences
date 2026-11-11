@@ -93,6 +93,11 @@
     return Array.prototype.indexOf.call(crumbItems(), crumb.closest('li')) + 1;
   }
 
+  // Label value per the spec: breadcrumb level and name, e.g. "1 (Home)" or "3 (Milk)".
+  function crumbLevelLabel(crumb) {
+    return crumbLevel(crumb) + ' (' + crumb.textContent.trim() + ')';
+  }
+
   // One delegated listener: the storefront re-renders these nodes, and only real clicks count.
   // Clicks on quicklink never happen in control, so the "after a quicklink" flag is never set here.
   function onClick(event) {
@@ -103,7 +108,7 @@
     var crumb = target.closest('nav[aria-label="breadcrumbs"] a');
     if (crumb) {
       trackEvent(SEGMENTS.breadcrumb, 'Breadcrumb click');
-      trackEvent(SEGMENTS.breadcrumbLevel, 'Breadcrumb click | ' + crumbLevel(crumb));
+      trackEvent(SEGMENTS.breadcrumbLevel, 'Breadcrumb click | ' + crumbLevelLabel(crumb));
       return;
     }
 
