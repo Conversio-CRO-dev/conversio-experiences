@@ -15,7 +15,7 @@
   var VARIANT_LABEL = 'Control Original';   
   var OPEN_SECTIONS = null;        
   var APPLY_LAYOUT = OPEN_SECTIONS !== null;
-  var DESKTOP_MIN_WIDTH = 992;         
+  var DESKTOP_MIN_WIDTH = 1024;         
   var PENDING_CLASS = 'lt177-pending';  
   var PENDING_TIMEOUT = 1500;
 
