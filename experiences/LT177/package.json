@@ -1,0 +1,18 @@
+{
+  "name": "experience-lt177",
+  "version": "0.1.0",
+  "description": "Conversio CRO experience: LT177",
+  "client": "laithwaites",
+  "scripts": {
+    "build:v1": "npm run build:experience -- LT177 variation-1",
+    "build:v2": "npm run build:experience -- LT177 variation-2",
+    "build:control": "npm run build:experience -- LT177 control",
+    "test:v1": "node test.js LT177 variation-1",
+    "test:v2": "node test.js LT177 variation-2",
+    "test:control": "node test.js LT177 control"
+  },
+  "private": true,
+  "dependencies": {
+    "@conversio/helpers": "*"
+  }
+}

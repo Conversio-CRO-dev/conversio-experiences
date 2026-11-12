@@ -1,0 +1,4 @@
+// LT177 V2: hide the filter panel until the layout is set, so shoppers do not see sections close.
+.lt177-pending .facets-navigation {
+  visibility: hidden;
+}
