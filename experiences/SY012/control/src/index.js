@@ -102,6 +102,9 @@
   // Clicks on quicklink never happen in control, so the "after a quicklink" flag is never set here.
   function onClick(event) {
     if (!event.isTrusted) return;
+    // Several copies of this script can listen on the same page. Each click is handled once.
+    if (event.__sy012Handled) return;
+    event.__sy012Handled = true;
     var target = event.target;
     if (!target || !target.closest) return;
 
@@ -139,8 +142,10 @@
 
   // Starts tracking once per page load: the experience push, the click listener and the DOM watcher.
   function startTracking() {
-    if (window.__sy012Initialized) return;
+    // The page marker stops a second copy of the script from starting tracking again.
+    if (window.__sy012Initialized || document.documentElement.getAttribute('data-sy012-tracking')) return;
     window.__sy012Initialized = true;
+    document.documentElement.setAttribute('data-sy012-tracking', '1');
 
     pushDataLayer({
       event: 'conversio_experience',
