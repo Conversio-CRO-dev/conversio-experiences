@@ -1,12 +1,22 @@
 (function () {
-  // LT177 | A/B/n | Optimal Filter Display - All vs Top 1 vs Top 3 Open
-  // Desktop PLPs and search results. Control keeps every filter section open.
-  // Variants keep the top N sections open (order from the page at load) and collapse the rest.
-  var VARIANT = 'V2';          // 'Control', 'V1' or 'V2'
-  var OPEN_SECTIONS = 3;         // number of top sections left open; null means no change (control)
+
+  adobeDataLayer.push({
+  "event": "targetClickEvent",
+  "eventData": {
+    "click": {
+      "clickLocation": "Conversio Experience",
+      "clickAction": "LT177 | Optimal Filter Display - All vs Top 1 vs Top 3 Open",
+      "clickText": "LT177 | Variation 2"
+    }
+  }
+});
+
+  var VARIANT = 'V2';          
+  var VARIANT_LABEL = 'Variation 2';   
+  var OPEN_SECTIONS = 3;       
   var APPLY_LAYOUT = OPEN_SECTIONS !== null;
-  var DESKTOP_MIN_WIDTH = 992;          // assumed breakpoint for the desktop filter panel
-  var PENDING_CLASS = 'lt177-pending';  // hides the filter panel until the layout is set (styles.scss)
+  var DESKTOP_MIN_WIDTH = 1024;         
+  var PENDING_CLASS = 'lt177-pending';  
   var PENDING_TIMEOUT = 1500;
 
   var PANEL_SELECTOR = '.facets-navigation';
@@ -15,16 +25,22 @@
   var CHECKBOX_SELECTOR = '.facets-navigation input.ais-RefinementList-checkbox';
   var CARD_SELECTOR = '.ais-Hits-item';
 
-  var initialLabels = null;             // section names in the order shown at page load
-  var userToggled = {};                 // section names the shopper has opened or closed themselves
+  var initialLabels = null;             
+  var userToggled = {};                 
 
-  function pushEvent(eventName, params) {
-    window.dataLayer = window.dataLayer || [];
-    var payload = { event: 'conversioEvent', conversioEventName: eventName, experimentVariant: VARIANT };
-    for (var key in params) {
-      if (Object.prototype.hasOwnProperty.call(params, key)) payload[key] = params[key];
-    }
-    window.dataLayer.push(payload);
+  // Adobe Target click event, in the format the Adobe Data Layer uses for Conversio CRO events.
+  function pushEvent(clickText) {
+    window.adobeDataLayer = window.adobeDataLayer || [];
+    window.adobeDataLayer.push({
+      event: 'targetClickEvent',
+      eventData: {
+        click: {
+          clickLocation: 'Conversio CRO',
+          clickAction: 'LT177 | Event Tracking',
+          clickText: 'LT177 (' + VARIANT_LABEL + ') | ' + clickText
+        }
+      }
+    });
   }
 
   function isDesktop() {
@@ -33,23 +49,6 @@
 
   function sectionName(heading) {
     return heading.textContent.trim().replace(/\s+/g, ' ');
-  }
-
-  // Position at page load, so the number stays the same after re-ranking.
-  function positionOf(name) {
-    if (!initialLabels) return null;
-    var index = initialLabels.indexOf(name);
-    return index === -1 ? null : index + 1;
-  }
-
-  // The heading that sits above an element, i.e. the section it belongs to.
-  function sectionFor(element) {
-    var found = null;
-    var headings = document.querySelectorAll(HEADING_SELECTOR);
-    for (var i = 0; i < headings.length; i++) {
-      if (headings[i].compareDocumentPosition(element) & Node.DOCUMENT_POSITION_FOLLOWING) found = headings[i];
-    }
-    return found;
   }
 
   function isOpen(button) {
@@ -116,39 +115,34 @@
     if (toggle) {
       var heading = toggle.closest('.heading');
       var name = sectionName(heading);
-      var action = isOpen(toggle) ? 'collapse' : 'expand';   // state before the click
       userToggled[name] = true;
-      pushEvent('LT177_PLP_FILTER_SECTION_TOGGLE', {});
-      pushEvent('LT177_PLP_FILTER_SECTION_TOGGLE_NAMED', {
-        filter_name: name,
-        action: action,
-        filter_position: positionOf(name)
-      });
+      pushEvent('PLP Filter Section Toggle');
+      pushEvent('PLP Filter Section Toggle | ' + name);
       return;
     }
 
     if (target.closest('.refinements .refinement-item')) {
-      pushEvent('LT177_CLEAR_INDIVIDUAL_FILTER', {});
+      pushEvent('Clear individual filter');
       return;
     }
 
     if (target.closest('.clear-refinements')) {
-      pushEvent('LT177_CLEAR_ALL_FILTERS', {});
+      pushEvent('Clears all filters');
       return;
     }
 
     if (target.closest(CARD_SELECTOR + ' a[href*="/product/"]')) {
-      pushEvent('LT177_PLP_TO_PDP_CLICK_THROUGH', {});
+      pushEvent('PLP > PDP Click through');
       return;
     }
 
     if (target.closest(CARD_SELECTOR + ' button[aria-label="Increase quantity"]')) {
-      pushEvent('LT177_INCREASES_QUANTITY', {});
+      pushEvent('Increases quantity');
       return;
     }
 
     if (target.closest(CARD_SELECTOR + ' button[aria-label="Decrease quantity"]')) {
-      pushEvent('LT177_DECREASES_QUANTITY', {});
+      pushEvent('Decreases quantity');
     }
   }
 
@@ -158,15 +152,7 @@
     var input = event.target;
     if (!input || !input.matches || !input.matches(CHECKBOX_SELECTOR) || !input.checked) return;
 
-    var heading = sectionFor(input);
-    var name = heading ? sectionName(heading) : '';
-    var labelText = input.closest('label');
-    var value = labelText ? labelText.querySelector('.ais-RefinementList-labelText') : null;
-    pushEvent('LT177_PLP_FILTER_APPLIED', {
-      filter_name: name,
-      filter_value: value ? value.textContent.trim() : '',
-      filter_position: positionOf(name)
-    });
+    pushEvent('PLP Filter Applied');
   }
 
   function startTracking() {
