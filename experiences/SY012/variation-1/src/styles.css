@@ -24,7 +24,7 @@
   text-decoration: none;
 }
 .sy012-quicklinks a:hover, .sy012-quicklinks a:focus-visible {
-  background: #1b2a4a;
+  background: #333333;
   color: #fff;
 }
 @media (min-width: 768px) {

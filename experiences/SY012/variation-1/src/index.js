@@ -34,7 +34,7 @@
     '.sy012-quicklinks { display: flex; flex-wrap: nowrap; gap: 8px; margin: 12px 0 16px; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }',
     '.sy012-quicklinks::-webkit-scrollbar { display: none; }',
     '.sy012-quicklinks a { flex: 0 0 auto; padding: 8px 16px; border: 1px solid #333333; border-radius: 999px; background: #fff; color: #333333; font-size: 14px; font-weight: 600; line-height: 1.2; white-space: nowrap; text-decoration: none; }',
-    '.sy012-quicklinks a:hover, .sy012-quicklinks a:focus-visible { background: #1b2a4a; color: #fff; }',
+    '.sy012-quicklinks a:hover, .sy012-quicklinks a:focus-visible { background: #333333; color: #fff; }',
     '@media (min-width: 768px) { .sy012-quicklinks { flex-wrap: wrap; overflow-x: visible; } }'
   ].join('\n');
 
